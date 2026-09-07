@@ -1,2 +1,43 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>User health</h1>{% for member in members %}<p>{{ member.user.get_full_name|default:member.user.username }}</p>{% empty %}<p>No batch members found.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}User Health — All-in-One Fitness{% endblock %}
+{% block page_title %}User Health{% endblock %}
+{% block content %}
+<div class="card mb-4"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-8">
+      <label class="form-label">Search members</label>
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Name, username or email…">
+    </div>
+    <div class="col-md-4"><button class="btn btn-brand w-100">Search</button></div>
+  </form>
+</div></div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Member</th><th>Batch</th><th>Fitness goal</th><th>Latest weight</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for membership in page_obj %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span class="avatar avatar-sm">{{ membership.user.get_full_name|default:membership.user.username|slice:":1" }}</span>
+                <div><strong class="small d-block">{{ membership.user.get_full_name|default:membership.user.username }}</strong><span class="small text-muted">{{ membership.user.email }}</span></div>
+              </div>
+            </td>
+            <td>{{ membership.batch.name }}</td>
+            <td>{{ membership.user.profile.fitness_goal|default:'—' }}</td>
+            <td>{{ membership.user.health_records.first.weight|default:'—' }} kg</td>
+            <td class="table-actions">
+              <a href="{% url 'member_health' membership.user.id %}" class="btn btn-sm btn-outline-brand">View health</a>
+              <a href="{% url 'member_health_add' membership.user.id %}" class="btn btn-sm btn-outline-secondary">Add record</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No members assigned to your batches.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

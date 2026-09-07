@@ -1,0 +1,44 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Activity Logs — All-in-One Fitness{% endblock %}
+{% block page_title %}Activity Logs{% endblock %}
+{% block content %}
+<div class="card mb-4"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label">Action</label>
+      <select name="action" class="form-select">
+        <option value="">All actions</option>
+        {% for a in actions %}<option value="{{ a }}" {% if action == a %}selected{% endif %}>{{ a }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-5">
+      <label class="form-label">Search</label>
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Username or description…">
+    </div>
+    <div class="col-md-3 d-flex gap-2">
+      <button class="btn btn-brand w-100">Filter</button>
+    </div>
+  </form>
+</div></div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Description</th><th>IP</th></tr></thead>
+      <tbody>
+        {% for log in page_obj %}
+          <tr>
+            <td>{{ log.created_at|date:'d M Y H:i:s' }}</td>
+            <td>{{ log.user.username|default:'system' }}</td>
+            <td><span class="badge badge-soft-info">{{ log.action }}</span></td>
+            <td class="small">{{ log.description|default:'—' }}</td>
+            <td class="small text-muted">{{ log.ip_address|default:'—' }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No activity logged yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

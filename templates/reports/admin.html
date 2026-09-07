@@ -1,2 +1,61 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Admin report</h1><p>Users: {{ total_users }}</p><p>Trainers: {{ trainers }}</p><p>Experts: {{ experts }}</p><p>Active memberships: {{ active_memberships }}</p><p>Pending payments: {{ pending_payments }}</p><p>Upcoming events: {{ upcoming_events }}</p><p>Revenue: {{ revenue }}</p></div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Admin Reports — All-in-One Fitness{% endblock %}
+{% block page_title %}Reports &amp; Analytics{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon"><i class="bi bi-people"></i></div><div><div class="num">{{ total_users }}</div><div class="lbl">Registered users</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon blue"><i class="bi bi-person-check"></i></div><div><div class="num">{{ active_users }}</div><div class="lbl">Active users</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon amber"><i class="bi bi-cash-stack"></i></div><div><div class="num">₹{{ total_revenue }}</div><div class="lbl">Total revenue</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon red"><i class="bi bi-exclamation-triangle"></i></div><div><div class="num">{{ pending_payments }}</div><div class="lbl">Pending payments</div></div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card mb-4"><div class="card-header">Monthly revenue</div><div class="card-body"><canvas id="revChart" height="120"></canvas></div></div>
+    <div class="card mb-4"><div class="card-header">Users by batch</div><div class="card-body"><canvas id="batchChart" height="120"></canvas></div></div>
+    <div class="card"><div class="card-header">Event participation (top 8)</div><div class="card-body"><canvas id="eventChart" height="120"></canvas></div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card mb-4"><div class="card-header">Attendance summary</div><div class="card-body"><canvas id="attChart" height="140"></canvas></div></div>
+    <div class="card mb-4"><div class="card-header">Payment status breakdown</div><div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Status</th><th>Count</th><th>Amount</th></tr></thead>
+          <tbody>
+            {% for s in payment_status %}
+              <tr><td><span class="badge {% if s.status == 'Paid' %}badge-soft-success{% elif s.status == 'Pending' %}badge-soft-warning{% else %}badge-soft-danger{% endif %}">{{ s.status }}</span></td><td>{{ s.total }}</td><td>₹{{ s.amount|floatformat:2 }}</td></tr>
+            {% empty %}
+              <tr><td colspan="3" class="text-muted text-center">No payments yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+    <div class="card"><div class="card-header">Feedback ratings (avg {{ feedback_avg|floatformat:1 }}/5)</div><div class="card-body"><canvas id="ratingChart" height="110"></canvas></div></div>
+  </div>
+</div>
+
+<div class="card mt-4"><div class="card-header">Plans by subscribers</div><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Plan</th><th>Amount</th><th>Subscribers</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for plan in plans %}
+          <tr><td>{{ plan.name }}</td><td>₹{{ plan.amount }}</td><td>{{ plan.subscribers }}</td><td>{% if plan.is_active %}<span class="badge badge-soft-success">Active</span>{% else %}<span class="badge badge-soft-secondary">Inactive</span>{% endif %}</td></tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-muted text-center">No plans yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% endblock %}
+{% block extra_js %}
+<script>
+new Chart(document.getElementById('revChart'), { type: 'bar', data: { labels: {{ month_labels|safe }}, datasets: [{ label: 'Revenue (₹)', data: {{ month_revenue|safe }}, backgroundColor: '#16a34a', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+new Chart(document.getElementById('batchChart'), { type: 'bar', data: { labels: {{ batch_labels|safe }}, datasets: [{ label: 'Members', data: {{ batch_counts|safe }}, backgroundColor: '#2563eb', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+new Chart(document.getElementById('eventChart'), { type: 'bar', data: { labels: {{ event_labels|safe }}, datasets: [{ label: 'Registrations', data: {{ event_counts|safe }}, backgroundColor: '#d97706', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, indexAxis: 'y', scales: { x: { beginAtZero: true } } } });
+new Chart(document.getElementById('attChart'), { type: 'doughnut', data: { labels: {{ attendance_labels|safe }}, datasets: [{ data: {{ attendance_counts|safe }}, backgroundColor: ['#16a34a', '#dc2626'] }] } });
+new Chart(document.getElementById('ratingChart'), { type: 'bar', data: { labels: {{ rating_labels|safe }}, datasets: [{ label: 'Count', data: {{ rating_counts|safe }}, backgroundColor: '#7c3aed', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+</script>
+{% endblock %}

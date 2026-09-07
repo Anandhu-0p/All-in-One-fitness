@@ -1,0 +1,72 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Progress Tracker — All-in-One Fitness{% endblock %}
+{% block page_title %}Progress Tracker{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card mb-4"><div class="card-header">Weight over time</div><div class="card-body">
+      <canvas id="weightChart" height="110"></canvas>
+    </div></div>
+    <div class="row g-4">
+      <div class="col-md-6">
+        <div class="card"><div class="card-header">Body fat %</div><div class="card-body"><canvas id="bodyFatChart" height="110"></canvas></div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card"><div class="card-header">Waist (cm)</div><div class="card-body"><canvas id="waistChart" height="110"></canvas></div></div>
+      </div>
+    </div>
+    <div class="card mt-4"><div class="card-header">All measurements</div><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Date</th><th>Weight</th><th>Waist</th><th>Body fat</th><th>Note</th></tr></thead>
+          <tbody>
+            {% for record in records %}
+              <tr>
+                <td>{{ record.recorded_at|date:'d M Y' }}</td>
+                <td>{{ record.weight|default:'—' }} kg</td>
+                <td>{{ record.waist_measurement|default:'—' }} cm</td>
+                <td>{{ record.body_fat_percentage|default:'—' }}%</td>
+                <td class="text-muted small">{{ record.progress_note|default:'—' }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="text-center text-muted py-4">No measurements yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card"><div class="card-header">Add measurement</div><div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <button type="submit" class="btn btn-brand w-100">Save measurement</button>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+{{ weights|json_script:'weight-data' }}
+{{ body_fat|json_script:'body-fat-data' }}
+{{ waist|json_script:'waist-data' }}
+<script>
+const weightData = JSON.parse(document.getElementById('weight-data').textContent);
+const bodyFatData = JSON.parse(document.getElementById('body-fat-data').textContent);
+const waistData = JSON.parse(document.getElementById('waist-data').textContent);
+function lineChart(id, data, label, color, valueKey) {
+  new Chart(document.getElementById(id), {
+    type: 'line',
+    data: { labels: data.map(d => d.date), datasets: [{ label, data: data.map(d => d[valueKey]), borderColor: color, backgroundColor: color + '22', fill: true, tension: .35, pointRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
+  });
+}
+if (weightData.length) lineChart('weightChart', weightData, 'Weight (kg)', '#16a34a', 'weight');
+else document.getElementById('weightChart').parentElement.innerHTML = '<div class="empty-state"><i class="bi bi-graph-up"></i>Add measurements to see your weight trend.</div>';
+if (bodyFatData.length) lineChart('bodyFatChart', bodyFatData, 'Body fat %', '#d97706', 'value');
+else document.getElementById('bodyFatChart').parentElement.innerHTML = '<div class="empty-state">No body-fat data yet.</div>';
+if (waistData.length) lineChart('waistChart', waistData, 'Waist (cm)', '#2563eb', 'value');
+else document.getElementById('waistChart').parentElement.innerHTML = '<div class="empty-state">No waist data yet.</div>';
+</script>
+{% endblock %}

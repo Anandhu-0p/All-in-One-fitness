@@ -1,2 +1,43 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Attendance</h1><table class="table"><tr><th>Date</th><th>User</th><th>Status</th></tr>{% for entry in entries %}<tr><td>{{ entry.date }}</td><td>{{ entry.user }}</td><td>{{ entry.status }}</td></tr>{% empty %}<tr><td colspan="3">No attendance records.</td></tr>{% endfor %}</table></div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Attendance — All-in-One Fitness{% endblock %}
+{% block page_title %}Attendance{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <form method="get" class="d-flex gap-2 flex-wrap">
+    <select name="batch" class="form-select form-select-sm" style="width:auto">
+      <option value="">All batches</option>
+      {% for b in batches %}
+        <option value="{{ b.id }}" {% if batch_id == b.id|stringformat:'s' %}selected{% endif %}>{{ b.name }}</option>
+      {% endfor %}
+    </select>
+    <select name="status" class="form-select form-select-sm" style="width:auto">
+      <option value="">All statuses</option>
+      <option value="Present" {% if status == 'Present' %}selected{% endif %}>Present</option>
+      <option value="Absent" {% if status == 'Absent' %}selected{% endif %}>Absent</option>
+    </select>
+    <button class="btn btn-sm btn-brand">Filter</button>
+  </form>
+  <a href="{% url 'trainer_attendance_mark' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>Mark attendance</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Date</th><th>Batch</th><th>Member</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        {% for entry in page_obj %}
+          <tr>
+            <td>{{ entry.date }}</td>
+            <td>{{ entry.batch.name }}</td>
+            <td>{{ entry.user.get_full_name|default:entry.user.username }}</td>
+            <td>{% if entry.status == 'Present' %}<span class="badge badge-soft-success">Present</span>{% else %}<span class="badge badge-soft-danger">Absent</span>{% endif %}</td>
+            <td class="text-muted">{{ entry.notes|default:'—' }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No attendance records.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

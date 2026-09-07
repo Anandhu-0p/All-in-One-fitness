@@ -1,0 +1,33 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Assign {{ plan.title }} — All-in-One Fitness{% endblock %}
+{% block page_title %}Assign Plan{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card"><div class="card-header">Assign to users</div><div class="card-body">
+      <p class="small text-muted">Assign <strong>{{ plan.title }}</strong> to an individual user or to everyone in one of your batches.</p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <button type="submit" class="btn btn-brand w-100">Assign plan</button>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card"><div class="card-header">Currently assigned ({{ assigned_users.count }})</div><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>User</th><th>Start</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for a in assigned_users %}
+              <tr><td>{{ a.user.get_full_name|default:a.user.username }}</td><td>{{ a.start_date }}</td><td><span class="badge badge-soft-success">{{ a.status }}</span></td></tr>
+            {% empty %}
+              <tr><td colspan="3" class="text-center text-muted py-4">Not assigned to anyone yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

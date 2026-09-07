@@ -1,16 +1,29 @@
 {% extends 'base.html' %}
+{% block title %}Log in — All-in-One Fitness{% endblock %}
 {% block content %}
-<div class="login-wrap">
-  <div class="auth-card panel">
-  <h1>Welcome back</h1>
-  <p class="muted">Sign in to continue your fitness journey.</p>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <p><label for="id_username">Username</label>{{ form.username }}</p>
-    <p><label for="id_password">Password</label>{{ form.password }}</p>
-    <button type="submit" class="btn btn-red">Log in</button>
-  </form>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <a class="brand mb-3" href="{% url 'landing' %}">ALL-IN-ONE <span>FITNESS</span></a>
+    <h1 class="mb-1">Welcome back</h1>
+    <p class="text-muted small mb-4">Log in to your dashboard.</p>
+    {% if messages %}
+      {% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}
+    {% endif %}
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include 'partials/form.html' %}
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="{% url 'password_reset' %}" class="small">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn btn-brand w-100">Log in</button>
+    </form>
+    <p class="text-center small text-muted mt-3 mb-0">New here? <a href="{% url 'register' %}">Create an account</a></p>
+    <hr>
+    <div class="small text-muted">
+      <strong class="d-block mb-1">Demo accounts</strong>
+      admin@example.com · trainer@example.com · expert@example.com · user@example.com<br>
+      Password for all: <code>Fitness@123</code>
+    </div>
   </div>
 </div>
 {% endblock %}

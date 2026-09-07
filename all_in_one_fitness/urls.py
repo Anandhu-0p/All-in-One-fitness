@@ -15,4 +15,7 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('notifications/', include('notifications.urls')),
     path('reports/', include('reports.urls')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('manage/', include('admin_panel.urls')),
+    path('api/', include('api.urls')),
+] + static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static') \
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

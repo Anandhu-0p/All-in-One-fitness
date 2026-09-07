@@ -1,2 +1,37 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Profile</h1>{% if profile %}<dl><dt>Name</dt><dd>{{ profile.full_name }}</dd><dt>Email</dt><dd>{{ profile.email }}</dd><dt>Goal</dt><dd>{{ profile.fitness_goal|default:'Not set' }}</dd></dl>{% else %}<p>Profile details are not available.</p>{% endif %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}My Profile — All-in-One Fitness{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card"><div class="card-body text-center">
+      {% if profile.profile_image %}
+        <span class="avatar mb-3" style="width:96px;height:96px;font-size:2rem"><img src="{{ profile.profile_image.url }}" alt=""></span>
+      {% else %}
+        <span class="avatar mb-3" style="width:96px;height:96px;font-size:2rem">{{ profile.full_name|default:user.username|slice:":1" }}</span>
+      {% endif %}
+      <h5 class="mb-1">{{ profile.full_name|default:user.username }}</h5>
+      <div class="small text-muted mb-3">{{ profile.fitness_goal|default:'No fitness goal set' }}</div>
+      <a href="{% url 'user_profile' %}" class="btn btn-brand btn-sm w-100"><i class="bi bi-pencil me-1"></i>Edit profile</a>
+    </div></div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card"><div class="card-header">Details</div><div class="card-body">
+      <div class="row g-3">
+        <div class="col-sm-6"><div class="small text-muted text-uppercase fw-bold">Email</div><div>{{ user.email|default:'—' }}</div></div>
+        <div class="col-sm-6"><div class="small text-muted text-uppercase fw-bold">Mobile</div><div>{{ profile.mobile_number|default:'—' }}</div></div>
+        <div class="col-sm-6"><div class="small text-muted text-uppercase fw-bold">Gender</div><div>{{ profile.gender|default:'—' }}</div></div>
+        <div class="col-sm-6"><div class="small text-muted text-uppercase fw-bold">Date of birth</div><div>{{ profile.date_of_birth|default:'—' }}</div></div>
+        <div class="col-sm-6"><div class="small text-muted text-uppercase fw-bold">Activity level</div><div>{{ profile.activity_level|default:'—' }}</div></div>
+        <div class="col-sm-6"><div class="small text-muted text-uppercase fw-bold">Batch</div><div>{{ membership.batch.name|default:'Not assigned' }}</div></div>
+        <div class="col-sm-6"><div class="small text-muted text-uppercase fw-bold">Dietary preference</div><div>{{ profile.dietary_preference|default:'—' }}</div></div>
+        <div class="col-sm-6"><div class="small text-muted text-uppercase fw-bold">Allergies</div><div>{{ profile.allergies|default:'None' }}</div></div>
+        <div class="col-12"><div class="small text-muted text-uppercase fw-bold">Address</div><div>{{ profile.address|default:'—' }}</div></div>
+        {% if profile.medical_notes %}
+          <div class="col-12"><div class="small text-muted text-uppercase fw-bold">Medical notes</div><div>{{ profile.medical_notes }}</div></div>
+        {% endif %}
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

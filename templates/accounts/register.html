@@ -1,13 +1,20 @@
 {% extends 'base.html' %}
+{% block title %}Register — All-in-One Fitness{% endblock %}
 {% block content %}
-<div class="login-wrap">
-  <div class="auth-card panel">
-  <h1>Create your account</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-red">Create account</button>
-  </form>
+<div class="auth-wrap">
+  <div class="auth-card">
+    <a class="brand mb-3" href="{% url 'landing' %}">ALL-IN-ONE <span>FITNESS</span></a>
+    <h1 class="mb-1">Create your account</h1>
+    <p class="text-muted small mb-4">Join as a member and get assigned to a batch with a trainer.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include 'partials/form.html' %}
+      <button type="submit" class="btn btn-brand w-100">Register</button>
+    </form>
+    <p class="text-center small text-muted mt-3 mb-0">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+    <div class="disclaimer-box mt-3">
+      By registering you agree that fitness and nutrition content is educational and does not replace professional medical advice.
+    </div>
   </div>
 </div>
 {% endblock %}

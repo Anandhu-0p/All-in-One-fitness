@@ -1,2 +1,18 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Feedback</h1><form method="post">{% csrf_token %}<label>Subject<input class="form-control" name="subject" required></label><label>Message<textarea class="form-control" name="message" required></textarea></label><label>Rating<input class="form-control" type="number" min="1" max="5" name="rating" value="5"></label><button class="btn btn-primary mt-3">Submit feedback</button></form></div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Feedback — All-in-One Fitness{% endblock %}
+{% block page_title %}Feedback{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card"><div class="card-body">
+      <p class="text-muted small mb-3">We take every piece of feedback seriously. Rate your experience and tell us what we can improve.</p>
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <button type="submit" class="btn btn-brand">Submit feedback</button>
+      </form>
+      <a href="{% url 'feedback_my' %}" class="btn btn-link btn-sm mt-2">View my feedback</a>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

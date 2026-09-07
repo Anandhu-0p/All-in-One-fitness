@@ -1,2 +1,73 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Events</h1>{% for event in events %}<div class="card p-3 mb-2"><h2>{{ event.title }}</h2><p>{{ event.description }}</p><p>{{ event.event_date }} at {{ event.venue }}</p><a class="btn btn-primary" href="{% url 'register_event' event.id %}">Register</a></div>{% empty %}<p>No open events.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Events — All-in-One Fitness{% endblock %}
+{% block page_title %}Events{% endblock %}
+{% block content %}
+<div class="card mb-4"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-4">
+      <label class="form-label">Search events</label>
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Event title…">
+    </div>
+    <div class="col-md-4">
+      <label class="form-label">Month</label>
+      <select name="month" class="form-select">
+        <option value="">All months</option>
+        <option value="1" {% if month == '1' %}selected{% endif %}>January</option>
+        <option value="2" {% if month == '2' %}selected{% endif %}>February</option>
+        <option value="3" {% if month == '3' %}selected{% endif %}>March</option>
+        <option value="4" {% if month == '4' %}selected{% endif %}>April</option>
+        <option value="5" {% if month == '5' %}selected{% endif %}>May</option>
+        <option value="6" {% if month == '6' %}selected{% endif %}>June</option>
+        <option value="7" {% if month == '7' %}selected{% endif %}>July</option>
+        <option value="8" {% if month == '8' %}selected{% endif %}>August</option>
+        <option value="9" {% if month == '9' %}selected{% endif %}>September</option>
+        <option value="10" {% if month == '10' %}selected{% endif %}>October</option>
+        <option value="11" {% if month == '11' %}selected{% endif %}>November</option>
+        <option value="12" {% if month == '12' %}selected{% endif %}>December</option>
+      </select>
+    </div>
+    <div class="col-md-4 d-flex gap-2">
+      <button type="submit" class="btn btn-brand w-100"><i class="bi bi-search me-1"></i>Filter</button>
+      {% if q or month %}<a href="{% url 'event_list' %}" class="btn btn-outline-secondary">Clear</a>{% endif %}
+    </div>
+  </form>
+</div></div>
+
+<div class="row g-4">
+  {% for event in events %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <h5 class="mb-0">{{ event.title }}</h5>
+            {% if event.registered_by_me %}
+              <span class="badge badge-soft-success">Registered</span>
+            {% else %}
+              <span class="badge badge-soft-info">Open</span>
+            {% endif %}
+          </div>
+          <div class="small text-muted mb-3">
+            <div><i class="bi bi-geo-alt me-1"></i>{{ event.venue }}</div>
+            <div><i class="bi bi-calendar me-1"></i>{{ event.event_date|date:'l, d M Y' }}</div>
+            <div><i class="bi bi-clock me-1"></i>{{ event.start_time|time:'g:i A' }} – {{ event.end_time|time:'g:i A' }}</div>
+            <div><i class="bi bi-people me-1"></i>{{ event.registered }} / {{ event.capacity }} registered</div>
+          </div>
+          <p class="small text-muted">{{ event.description|truncatewords:24 }}</p>
+          <div class="progress mb-3" style="height:6px">
+            <div class="progress-bar" style="width:{% widthratio event.registered event.capacity 100 %}%"></div>
+          </div>
+          {% if event.registered_by_me %}
+            <a href="{% url 'user_events' %}" class="btn btn-outline-secondary btn-sm w-100">View my registration</a>
+          {% elif event.spots_left %}
+            <a href="{% url 'register_event' event.id %}" class="btn btn-brand btn-sm w-100"><i class="bi bi-ticket-perforated me-1"></i>Register · {{ event.spots_left }} left</a>
+          {% else %}
+            <button class="btn btn-secondary btn-sm w-100" disabled>Event full</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="empty-state card"><i class="bi bi-calendar-x"></i>No events match your filters.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}

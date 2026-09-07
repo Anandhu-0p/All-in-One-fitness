@@ -1,0 +1,43 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Settings — All-in-One Fitness{% endblock %}
+{% block page_title %}Settings{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card"><div class="card-header">Platform content (public site)</div><div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {% for item in items %}
+          <div class="border rounded p-3 mb-3">
+            <input type="hidden" name="id_{{ item.id }}" value="{{ item.id }}">
+            <label class="form-label">{{ item.key|title }}</label>
+            <input type="text" name="title_{{ item.id }}" value="{{ item.title }}" class="form-control mb-2" placeholder="Title">
+            <textarea name="content_{{ item.id }}" rows="3" class="form-control" placeholder="Content">{{ item.content }}</textarea>
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-brand">Save content</button>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-4"><div class="card-header">Unread contact messages</div><div class="card-body p-0">
+      {% for msg in messages_list %}
+        <div class="px-3 py-2 border-bottom small">
+          <strong>{{ msg.name }}</strong> <span class="text-muted">({{ msg.email }})</span>
+          <div class="text-muted">{{ msg.subject }} — {{ msg.created_at|date:'d M Y' }}</div>
+        </div>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-envelope-check"></i>No unread messages.</div>
+      {% endfor %}
+    </div></div>
+    <div class="card"><div class="card-header">Security notes</div><div class="card-body small text-muted">
+      <ul class="mb-0 ps-3">
+        <li>Passwords are hashed with Django's PBKDF2 (never stored in plain text).</li>
+        <li>All management views require an administrator session.</li>
+        <li>File uploads are validated by type and size.</li>
+        <li>CSRF protection is enabled on every form.</li>
+      </ul>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

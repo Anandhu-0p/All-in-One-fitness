@@ -1,2 +1,58 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Chat</h1>{% for conversation in conversations %}<div class="card p-3 mb-2">Conversation updated {{ conversation.updated_at }}</div>{% empty %}<p>No conversations yet.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Chat — All-in-One Fitness{% endblock %}
+{% block page_title %}Chat{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card"><div class="card-header">Conversations</div><div class="card-body p-0">
+      {% for convo in conversations %}
+        <a href="{% url 'chat_thread' convo.id %}" class="text-decoration-none">
+          <div class="d-flex align-items-center gap-3 px-3 py-3 border-bottom">
+            <span class="avatar">{{ convo.other.get_full_name|default:convo.other.username|slice:":1" }}</span>
+            <div class="flex-grow-1">
+              <div class="d-flex justify-content-between">
+                <strong class="small">{{ convo.other.get_full_name|default:convo.other.username }}</strong>
+                {% if convo.unread %}<span class="badge bg-danger rounded-pill">{{ convo.unread }}</span>{% endif %}
+              </div>
+              <div class="small text-muted text-truncate">{{ convo.last_message.message|default:'No messages yet' }}</div>
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-chat-dots"></i>No conversations yet — start one from the contacts below.</div>
+      {% endfor %}
+    </div></div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card"><div class="card-header">Start a conversation</div><div class="card-body">
+      {% if contacts.trainer %}
+        <h6 class="small text-uppercase text-muted fw-bold">Your trainer</h6>
+        <a href="{% url 'chat_start' 'trainer' contacts.trainer.trainer_profile.id %}" class="btn btn-outline-brand btn-sm mb-3">
+          <i class="bi bi-chat-dots me-1"></i>{{ contacts.trainer.get_full_name|default:contacts.trainer.username }}
+        </a>
+      {% endif %}
+      {% if contacts.experts is not None %}
+        <h6 class="small text-uppercase text-muted fw-bold mt-3">Experts</h6>
+        {% for expert in contacts.experts %}
+          <a href="{% url 'chat_start' 'expert' expert.expert_profile.id %}" class="btn btn-outline-brand btn-sm mb-2 me-1">
+            <i class="bi bi-chat-dots me-1"></i>{{ expert.get_full_name|default:expert.username }}
+          </a>
+        {% empty %}
+          <div class="small text-muted">No experts available.</div>
+        {% endfor %}
+      {% endif %}
+      {% if contacts.members is not None %}
+        <h6 class="small text-uppercase text-muted fw-bold">Members</h6>
+        {% for member in contacts.members %}
+          <a href="{% url 'chat_start' 'user' member.id %}" class="btn btn-outline-brand btn-sm mb-2 me-1">
+            <i class="bi bi-person me-1"></i>{{ member.get_full_name|default:member.username }}
+          </a>
+        {% empty %}
+          <div class="small text-muted">No members available.</div>
+        {% endfor %}
+      {% endif %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}

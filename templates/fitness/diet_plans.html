@@ -1,0 +1,44 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}My Diet Plans — All-in-One Fitness{% endblock %}
+{% block page_title %}My Diet Plans{% endblock %}
+{% block content %}
+<div class="disclaimer-box mb-4"><i class="bi bi-info-circle me-1"></i><strong>Educational content:</strong> diet plans are educational guidance and do not replace professional medical advice. Please discuss allergies and conditions with your expert or a doctor.</div>
+{% if not assignments %}
+  <div class="empty-state card"><i class="bi bi-egg-fried"></i><h5>No diet plans yet</h5><p class="small">Your nutrition expert will assign a personalised plan soon.</p></div>
+{% endif %}
+<div class="row g-4">
+  {% for assignment in assignments %}
+    <div class="col-lg-6">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span>{{ assignment.diet_plan.title }}</span>
+          <span class="badge {% if assignment.status == 'Active' %}badge-soft-success{% else %}badge-soft-secondary{% endif %}">{{ assignment.status }}</span>
+        </div>
+        <div class="card-body">
+          <p class="text-muted small">{{ assignment.diet_plan.description }}</p>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="badge badge-soft-info">{{ assignment.diet_plan.goal|default:'General health' }}</span>
+            <span class="badge badge-soft-warning">{{ assignment.diet_plan.calories }} kcal/day</span>
+            <span class="badge badge-soft-secondary">{{ assignment.diet_plan.dietary_preference|default:'Any' }}</span>
+          </div>
+          <div class="small text-muted mb-2">
+            Expert: <strong>{{ assignment.diet_plan.created_by_expert.full_name }}</strong> · Assigned {{ assignment.start_date }}
+          </div>
+          <h6 class="mt-3 mb-2">Daily meals</h6>
+          {% for meal in assignment.diet_plan.meals.all %}
+            <div class="border rounded p-2 mb-2 d-flex justify-content-between">
+              <div>
+                <strong class="small">{{ meal.meal_type }}: {{ meal.meal_name }}</strong>
+                {% if meal.description %}<div class="small text-muted">{{ meal.description }}</div>{% endif %}
+              </div>
+              <span class="small text-muted">{{ meal.calories }} kcal</span>
+            </div>
+          {% empty %}
+            <div class="small text-muted">No meals listed.</div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

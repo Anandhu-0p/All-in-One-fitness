@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Our Experts — All-in-One Fitness{% endblock %}
+{% block content %}
+<section class="section pt-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <p class="section-kicker mb-2">Wellness team</p>
+      <h1 class="display-4 fw-bold">Meet our <span class="text-success">experts</span></h1>
+      <p class="text-muted mx-auto mt-3" style="max-width:620px">Nutrition, wellness and lifestyle professionals who build diet plans, videos and educational content.</p>
+    </div>
+    <div class="row g-4">
+      {% for expert in experts %}
+        <div class="col-md-6 col-lg-4">
+          <div class="team-card text-center">
+            {% if expert.profile_image %}
+              <span class="avatar mb-3" style="width:84px;height:84px;font-size:1.8rem"><img src="{{ expert.profile_image.url }}" alt="{{ expert.full_name }}"></span>
+            {% else %}
+              <span class="avatar mb-3" style="width:84px;height:84px;font-size:1.8rem">{{ expert.full_name|slice:":1" }}</span>
+            {% endif %}
+            <h5>{{ expert.full_name }}</h5>
+            <div class="small text-muted mb-2">{{ expert.specialization|default:'Wellness expert' }}</div>
+            <div class="small text-muted mb-3">{{ expert.qualification|default:'' }}</div>
+            {% if expert.bio %}<p class="small text-muted">{{ expert.bio|truncatewords:26 }}</p>{% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12"><div class="empty-state"><i class="bi bi-person-hearts"></i>No experts listed yet — check back soon.</div></div>
+      {% endfor %}
+    </div>
+    <div class="disclaimer-box mt-5 mx-auto" style="max-width:720px">
+      <i class="bi bi-info-circle me-1"></i><strong>Educational content only:</strong> all nutrition and wellness information on this platform is provided for educational purposes and does not replace professional medical advice or diagnosis.
+    </div>
+  </div>
+</section>
+{% endblock %}

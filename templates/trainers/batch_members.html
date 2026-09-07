@@ -1,0 +1,38 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ batch.name }} Members — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ batch.name }} · Members{% endblock %}
+{% block content %}
+<div class="d-flex gap-2 mb-3 flex-wrap">
+  <a href="{% url 'trainer_attendance_mark' %}?batch={{ batch.id }}" class="btn btn-brand btn-sm"><i class="bi bi-calendar-check me-1"></i>Mark attendance</a>
+  <a href="{% url 'trainer_batches' %}" class="btn btn-outline-secondary btn-sm">Back to batches</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Member</th><th>Email</th><th>Fitness goal</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for membership in members %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span class="avatar avatar-sm">{{ membership.user.get_full_name|default:membership.user.username|slice:":1" }}</span>
+                <strong class="small">{{ membership.user.get_full_name|default:membership.user.username }}</strong>
+              </div>
+            </td>
+            <td>{{ membership.user.email }}</td>
+            <td>{{ membership.user.profile.fitness_goal|default:'—' }}</td>
+            <td>{{ membership.joined_date }}</td>
+            <td class="table-actions">
+              <a href="{% url 'member_health' membership.user.id %}" class="btn btn-sm btn-outline-brand">Health</a>
+              <a href="{% url 'member_progress_add' membership.user.id %}" class="btn btn-sm btn-outline-secondary">Add progress</a>
+              <a href="{% url 'chat_start' 'user' membership.user.id %}" class="btn btn-sm btn-outline-info"><i class="bi bi-chat-dots"></i></a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No active members in this batch.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% endblock %}

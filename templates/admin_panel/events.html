@@ -1,0 +1,45 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Event Management — All-in-One Fitness{% endblock %}
+{% block page_title %}Event Management{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <form method="get" class="d-flex gap-2 flex-wrap">
+    <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search events…" style="width:220px">
+    <select name="status" class="form-select form-select-sm" style="width:auto">
+      <option value="">All statuses</option>
+      <option value="Open" {% if status == 'Open' %}selected{% endif %}>Open</option>
+      <option value="Closed" {% if status == 'Closed' %}selected{% endif %}>Closed</option>
+      <option value="Cancelled" {% if status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+    </select>
+    <button class="btn btn-sm btn-brand">Filter</button>
+  </form>
+  <a href="{% url 'event_create' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>Create event</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Event</th><th>Venue</th><th>Date &amp; time</th><th>Registered</th><th>Capacity</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for event in page_obj %}
+          <tr>
+            <td><strong>{{ event.title }}</strong><div class="small text-muted">{{ event.description|truncatewords:8 }}</div></td>
+            <td>{{ event.venue }}</td>
+            <td>{{ event.event_date|date:'d M Y' }}<div class="small text-muted">{{ event.start_time|time:'g:i A' }} – {{ event.end_time|time:'g:i A' }}</div></td>
+            <td>{{ event.reg_count }}</td>
+            <td>{{ event.capacity }}</td>
+            <td><span class="badge {% if event.status == 'Open' %}badge-soft-success{% elif event.status == 'Cancelled' %}badge-soft-danger{% else %}badge-soft-secondary{% endif %}">{{ event.status }}</span></td>
+            <td class="table-actions">
+              <a href="{% url 'event_participants' event.id %}" class="btn btn-sm btn-outline-brand">Participants</a>
+              <a href="{% url 'event_edit' event.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+              <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Delete or cancel this event?">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">No events found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

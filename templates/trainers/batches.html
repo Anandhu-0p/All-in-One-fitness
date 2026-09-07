@@ -1,2 +1,29 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>My batches</h1>{% for assignment in assignments %}<p>{{ assignment.batch.name }} - {{ assignment.batch.status }}</p>{% empty %}<p>No assigned batches.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}My Batches — All-in-One Fitness{% endblock %}
+{% block page_title %}My Batches{% endblock %}
+{% block content %}
+<div class="row g-4">
+  {% for assignment in assignments %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100"><div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h5 class="mb-0">{{ assignment.batch.name }}</h5>
+          <span class="badge {% if assignment.batch.status == 'Active' %}badge-soft-success{% else %}badge-soft-warning{% endif %}">{{ assignment.batch.status }}</span>
+        </div>
+        <div class="small text-muted mb-3">
+          <div><i class="bi bi-calendar-range me-1"></i>{{ assignment.batch.start_date }} → {{ assignment.batch.end_date }}</div>
+          <div><i class="bi bi-clock me-1"></i>{{ assignment.batch.schedule|default:'Schedule TBD' }}</div>
+          <div><i class="bi bi-people me-1"></i>{{ assignment.batch.memberships.count }} members · capacity {{ assignment.batch.capacity }}</div>
+        </div>
+        <p class="small text-muted">{{ assignment.batch.description|truncatewords:20 }}</p>
+        <div class="d-grid gap-2">
+          <a href="{% url 'trainer_batch_members' assignment.batch.id %}" class="btn btn-outline-brand btn-sm"><i class="bi bi-people me-1"></i>View members</a>
+          <a href="{% url 'trainer_attendance_mark' %}?batch={{ assignment.batch.id }}" class="btn btn-brand btn-sm"><i class="bi bi-calendar-check me-1"></i>Mark attendance</a>
+        </div>
+      </div></div>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="empty-state card"><i class="bi bi-layers"></i>No batches assigned yet. The admin will assign you to batches.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Workout Plans — All-in-One Fitness{% endblock %}
+{% block page_title %}Workout Plans{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'trainer_workout_create' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>New workout plan</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Title</th><th>Goal</th><th>Difficulty</th><th>Weeks</th><th>Exercises</th><th>Assigned</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for plan in page_obj %}
+          <tr>
+            <td><strong>{{ plan.title }}</strong></td>
+            <td>{{ plan.goal|default:'—' }}</td>
+            <td><span class="badge badge-soft-info">{{ plan.difficulty_level }}</span></td>
+            <td>{{ plan.duration_weeks }}</td>
+            <td>{{ plan.exercise_count }}</td>
+            <td>{{ plan.assignment_count }}</td>
+            <td>{% if plan.is_active %}<span class="badge badge-soft-success">Active</span>{% else %}<span class="badge badge-soft-secondary">Inactive</span>{% endif %}</td>
+            <td class="table-actions">
+              <a href="{% url 'trainer_workout_assign' plan.id %}" class="btn btn-sm btn-brand">Assign</a>
+              <a href="{% url 'trainer_workout_edit' plan.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+              <a href="{% url 'trainer_workout_delete' plan.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Delete or deactivate this plan?">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="text-center text-muted py-4">No workout plans yet — create your first one.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

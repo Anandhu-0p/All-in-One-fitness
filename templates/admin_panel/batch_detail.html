@@ -1,0 +1,47 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ batch.name }} — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ batch.name }}{% endblock %}
+{% block content %}
+<div class="d-flex gap-2 mb-3 flex-wrap">
+  <a href="{% url 'batch_users' batch.id %}" class="btn btn-brand btn-sm"><i class="bi bi-people me-1"></i>Manage members</a>
+  <a href="{% url 'batch_trainers' batch.id %}" class="btn btn-outline-brand btn-sm"><i class="bi bi-person-badge me-1"></i>Manage trainers</a>
+  <a href="{% url 'batch_edit' batch.id %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+  <a href="{% url 'manage_batches' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+</div>
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card"><div class="card-body">
+      <div class="small text-muted text-uppercase fw-bold mb-2">Details</div>
+      <div class="d-flex justify-content-between small py-1"><span class="text-muted">Schedule</span><strong>{{ batch.schedule|default:'—' }}</strong></div>
+      <div class="d-flex justify-content-between small py-1"><span class="text-muted">Period</span><strong>{{ batch.start_date }} → {{ batch.end_date }}</strong></div>
+      <div class="d-flex justify-content-between small py-1"><span class="text-muted">Capacity</span><strong>{{ batch.capacity }}</strong></div>
+      <div class="d-flex justify-content-between small py-1"><span class="text-muted">Status</span><strong>{{ batch.status }}</strong></div>
+      <p class="small text-muted mt-3 mb-0">{{ batch.description|default:'No description.' }}</p>
+    </div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card"><div class="card-header">Members ({{ members|length }})</div><div class="card-body p-0">
+      {% for membership in members %}
+        <div class="d-flex justify-content-between px-3 py-2 border-bottom small">
+          <span>{{ membership.user.get_full_name|default:membership.user.username }}</span>
+          <span class="badge {% if membership.status == 'Active' %}badge-soft-success{% else %}badge-soft-secondary{% endif %}">{{ membership.status }}</span>
+        </div>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-people"></i>No members.</div>
+      {% endfor %}
+    </div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card"><div class="card-header">Trainers ({{ trainers|length }})</div><div class="card-body p-0">
+      {% for assignment in trainers %}
+        <div class="d-flex justify-content-between px-3 py-2 border-bottom small">
+          <span>{{ assignment.trainer.full_name }}</span>
+          <span class="badge {% if assignment.status == 'Active' %}badge-soft-success{% else %}badge-soft-secondary{% endif %}">{{ assignment.status }}</span>
+        </div>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-person-badge"></i>No trainers.</div>
+      {% endfor %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}

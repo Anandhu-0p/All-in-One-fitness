@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Fitness Resources — All-in-One Fitness{% endblock %}
+{% block content %}
+<section class="section pt-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <p class="section-kicker mb-2">Resources</p>
+      <h1 class="display-4 fw-bold">Workout videos &amp; <span class="text-success">wellness tips</span></h1>
+      <p class="text-muted mx-auto mt-3" style="max-width:620px">Free samples of what members get. Sign in to see the full library with personalised plans.</p>
+    </div>
+
+    <h2 class="section-title mb-4" style="font-size:1.8rem"><i class="bi bi-play-circle text-success me-2"></i>Videos</h2>
+    <div class="row g-4 mb-5">
+      {% for video in videos %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100">
+            <div class="video-thumb">
+              {% if video.thumbnail %}<img src="{{ video.thumbnail.url }}" alt="{{ video.title }}">{% endif %}
+              <div class="play"><i class="bi bi-play-circle-fill"></i></div>
+            </div>
+            <div class="card-body">
+              <h6 class="mb-1">{{ video.title }}</h6>
+              <span class="badge badge-soft-info mb-2">{{ video.category|default:'Fitness' }}</span>
+              <p class="small text-muted mb-0">{{ video.description|truncatewords:18 }}</p>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">Videos will be published soon.</p>
+      {% endfor %}
+    </div>
+
+    <h2 class="section-title mb-4" style="font-size:1.8rem"><i class="bi bi-lightbulb text-success me-2"></i>Wellness tips</h2>
+    <div class="row g-4">
+      {% for tip in tips %}
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100"><div class="card-body">
+            <span class="badge badge-soft-success mb-2">{{ tip.category|default:'Wellness' }}</span>
+            <h6>{{ tip.title }}</h6>
+            <p class="small text-muted mb-0">{{ tip.content|truncatewords:30 }}</p>
+            <div class="small text-muted mt-2">{{ tip.created_at|date:'d M Y' }}</div>
+          </div></div>
+        </div>
+      {% empty %}
+        <p class="text-muted">Tips will be published soon.</p>
+      {% endfor %}
+    </div>
+
+    <div class="disclaimer-box mt-5 mx-auto" style="max-width:720px">
+      <i class="bi bi-info-circle me-1"></i><strong>Educational content only:</strong> all workout and wellness information is educational and does not replace professional medical advice.
+    </div>
+  </div>
+</section>
+{% endblock %}

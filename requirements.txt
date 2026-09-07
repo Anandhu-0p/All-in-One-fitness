@@ -4,3 +4,4 @@ mysqlclient
 python-dotenv
 django-bootstrap5
 Pillow
+gunicorn

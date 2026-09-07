@@ -1,0 +1,39 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Due Payments — All-in-One Fitness{% endblock %}
+{% block page_title %}Due Payments{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <p class="text-muted mb-0">Users with no paid membership for the current month.</p>
+  <form method="post" action="{% url 'due_remind' %}">
+    {% csrf_token %}
+    <button class="btn btn-brand btn-sm" data-confirm="Send payment reminders to all {{ page_obj.paginator.count }} due users?"><i class="bi bi-bell me-1"></i>Send reminders to all</button>
+  </form>
+</div>
+<div class="card mb-4"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-8"><label class="form-label">Search</label><input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Name, username or email…"></div>
+    <div class="col-md-4"><button class="btn btn-brand w-100">Search</button></div>
+  </form>
+</div></div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>User</th><th>Email</th><th>Last payment</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+        {% for user in page_obj %}
+          <tr>
+            <td>{{ user.get_full_name|default:user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.payments.first.payment_date|default:'Never' }}</td>
+            <td><span class="badge badge-soft-danger">Due</span></td>
+            <td><a href="{% url 'user_detail' user.id %}" class="btn btn-sm btn-outline-brand">View</a></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">Everyone is paid up for this month. 🎉</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

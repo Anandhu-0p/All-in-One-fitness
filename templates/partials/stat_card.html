@@ -1,0 +1,7 @@
+{% if link %}<a href="{{ link }}" class="stat-card text-decoration-none">{% else %}<div class="stat-card">{% endif %}
+  <div class="stat-icon {{ variant|default:'' }}"><i class="bi {{ icon }}"></i></div>
+  <div>
+    <div class="num">{{ value }}</div>
+    <div class="lbl">{{ label }}</div>
+  </div>
+{% if link %}</a>{% else %}</div>{% endif %}

@@ -1,0 +1,29 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}My Profile — All-in-One Fitness{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card"><div class="card-body text-center">
+      {% if expert.profile_image %}
+        <span class="avatar mb-3" style="width:96px;height:96px;font-size:2rem"><img src="{{ expert.profile_image.url }}" alt=""></span>
+      {% else %}
+        <span class="avatar mb-3" style="width:96px;height:96px;font-size:2rem">{{ expert.full_name|slice:":1" }}</span>
+      {% endif %}
+      <h5>{{ expert.full_name }}</h5>
+      <div class="small text-muted">{{ expert.specialization|default:'Wellness expert' }}</div>
+      <div class="small text-muted"><i class="bi bi-award me-1"></i>{{ expert.qualification|default:'—' }}</div>
+      {% if expert.bio %}<p class="small text-muted mt-2">{{ expert.bio }}</p>{% endif %}
+    </div></div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card"><div class="card-header">Edit profile</div><div class="card-body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <button type="submit" class="btn btn-brand">Save changes</button>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

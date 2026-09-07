@@ -1,0 +1,35 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Assign Batches — All-in-One Fitness{% endblock %}
+{% block page_title %}Assign Batches · {{ trainer.full_name }}{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card"><div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Batch</label>
+          <select name="batch" class="form-select" required>
+            <option value="">Select a batch…</option>
+            {% for batch in batches %}<option value="{{ batch.id }}">{{ batch.name }} ({{ batch.schedule|default:'—' }})</option>{% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-brand">Assign batch</button>
+        <a href="{% url 'manage_trainers' %}" class="btn btn-outline-secondary">Back</a>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card"><div class="card-header">Assigned batches</div><div class="card-body p-0">
+      {% for assignment in assignments %}
+        <div class="d-flex justify-content-between px-3 py-2 border-bottom small">
+          <span><strong>{{ assignment.batch.name }}</strong> <span class="text-muted">· since {{ assignment.assigned_date }}</span></span>
+          <span class="badge {% if assignment.status == 'Active' %}badge-soft-success{% else %}badge-soft-secondary{% endif %}">{{ assignment.status }}</span>
+        </div>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-layers"></i>No batches assigned.</div>
+      {% endfor %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}

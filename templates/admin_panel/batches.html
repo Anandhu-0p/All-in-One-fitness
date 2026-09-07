@@ -1,0 +1,41 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Batch Management — All-in-One Fitness{% endblock %}
+{% block page_title %}Batch Management{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <form method="get" class="d-flex gap-2">
+    <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search batches…" style="width:260px">
+    <button class="btn btn-sm btn-brand">Search</button>
+  </form>
+  <a href="{% url 'batch_create' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>Create batch</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Batch</th><th>Schedule</th><th>Duration</th><th>Members</th><th>Capacity</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for batch in page_obj %}
+          <tr>
+            <td><strong>{{ batch.name }}</strong><div class="small text-muted">{{ batch.description|truncatewords:8 }}</div></td>
+            <td>{{ batch.schedule|default:'—' }}</td>
+            <td>{{ batch.start_date }} → {{ batch.end_date }}</td>
+            <td>{{ batch.member_count }}</td>
+            <td>{{ batch.capacity }}</td>
+            <td><span class="badge {% if batch.status == 'Active' %}badge-soft-success{% elif batch.status == 'Upcoming' %}badge-soft-warning{% else %}badge-soft-secondary{% endif %}">{{ batch.status }}</span></td>
+            <td class="table-actions">
+              <a href="{% url 'batch_detail' batch.id %}" class="btn btn-sm btn-outline-brand">View</a>
+              <a href="{% url 'batch_users' batch.id %}" class="btn btn-sm btn-outline-secondary">Members</a>
+              <a href="{% url 'batch_trainers' batch.id %}" class="btn btn-sm btn-outline-secondary">Trainers</a>
+              <a href="{% url 'batch_edit' batch.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+              <a href="{% url 'batch_delete' batch.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Delete or close this batch?">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">No batches yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

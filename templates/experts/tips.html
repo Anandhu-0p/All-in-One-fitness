@@ -1,2 +1,32 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Wellness tips</h1>{% for tip in tips %}<article class="mb-3"><h2>{{ tip.title }}</h2><p>{{ tip.content }}</p></article>{% empty %}<p>No wellness tips found.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Tips &amp; Articles — All-in-One Fitness{% endblock %}
+{% block page_title %}Tips &amp; Articles{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'expert_tip_create' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>New tip</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Title</th><th>Category</th><th>Created</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for tip in page_obj %}
+          <tr>
+            <td><strong>{{ tip.title }}</strong><div class="small text-muted">{{ tip.content|truncatewords:10 }}</div></td>
+            <td>{{ tip.category|default:'—' }}</td>
+            <td>{{ tip.created_at|date:'d M Y' }}</td>
+            <td>{% if tip.is_published %}<span class="badge badge-soft-success">Published</span>{% else %}<span class="badge badge-soft-secondary">Draft</span>{% endif %}</td>
+            <td class="table-actions">
+              <a href="{% url 'expert_tip_edit' tip.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+              <a href="{% url 'expert_tip_delete' tip.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Delete this tip?">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No tips yet — share your knowledge!</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

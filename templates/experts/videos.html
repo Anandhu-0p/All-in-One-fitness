@@ -1,2 +1,43 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Fitness videos</h1>{% for video in items %}<div class="card p-3 mb-2"><h2>{{ video.title }}</h2><p>{{ video.description }}</p>{% if video.video_url %}<a href="{{ video.video_url }}">Watch video</a>{% endif %}</div>{% empty %}<p>No videos found.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Videos — All-in-One Fitness{% endblock %}
+{% block page_title %}Videos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'expert_video_create' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>Add video</a>
+</div>
+<div class="row g-4">
+  {% for video in page_obj %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="video-thumb">
+          {% if video.thumbnail %}<img src="{{ video.thumbnail.url }}" alt="{{ video.title }}">{% endif %}
+          {% if video.video_url or video.uploaded_file %}
+            {% if video.video_url %}
+              <a class="play" href="{{ video.video_url }}" target="_blank" rel="noopener"><i class="bi bi-play-circle-fill"></i></a>
+            {% else %}
+              <a class="play" href="{{ video.uploaded_file.url }}"><i class="bi bi-play-circle-fill"></i></a>
+            {% endif %}
+          {% else %}
+            <div class="play"><i class="bi bi-film"></i></div>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <h6 class="mb-1">{{ video.title }}</h6>
+            <span class="badge {% if video.is_active %}badge-soft-success{% else %}badge-soft-secondary{% endif %}">{{ video.is_active|yesno:'Active,Inactive' }}</span>
+          </div>
+          <p class="small text-muted mb-2">{{ video.description|truncatewords:16 }}</p>
+          <span class="badge badge-soft-info mb-2">{{ video.category|default:'Fitness' }}</span>
+          <div class="table-actions mt-2">
+            <a href="{% url 'expert_video_edit' video.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+            <a href="{% url 'expert_video_delete' video.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Delete this video?">Delete</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="empty-state card"><i class="bi bi-play-circle"></i>No videos yet — add your first instructional video.</div></div>
+  {% endfor %}
+</div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

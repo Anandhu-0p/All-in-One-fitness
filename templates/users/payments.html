@@ -1,2 +1,74 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>My payments</h1><table class="table"><tr><th>Date</th><th>Amount</th><th>Status</th></tr>{% for payment in payments %}<tr><td>{{ payment.payment_date }}</td><td>{{ payment.amount }}</td><td>{{ payment.status }}</td></tr>{% empty %}<tr><td colspan="3">No payments found.</td></tr>{% endfor %}</table></div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}My Payments — All-in-One Fitness{% endblock %}
+{% block page_title %}Payments{% endblock %}
+{% block content %}
+
+{% if payment.latest.status != 'Paid' %}
+  <div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-1"></i>Your membership payment is <strong>{{ payment.latest.status|default:'due' }}</strong>. Choose a plan below to pay now.</div>
+{% endif %}
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <h5 class="mb-3"><i class="bi bi-tags text-success me-2"></i>Membership plans</h5>
+    <div class="row g-3 mb-4 membership-plans">
+      {% for plan in plans %}
+        <div class="col-md-4">
+          <div class="card h-100 membership-plan-card"><div class="card-body text-center membership-plan-body">
+            <h5 class="membership-plan-title">{{ plan.name }}</h5>
+            <div class="display-6 fw-bold text-success mb-1">₹{{ plan.amount }}</div>
+            <div class="small text-muted mb-2">per {{ plan.duration_in_months }} month{{ plan.duration_in_months|pluralize }}</div>
+            <p class="small text-muted membership-plan-description">{{ plan.description|truncatewords:16 }}</p>
+            <a href="{% url 'pay_now' plan.id %}" class="btn btn-brand btn-sm w-100 mt-auto">Pay now</a>
+          </div></div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No active plans.</p>
+      {% endfor %}
+    </div>
+
+    <h5 class="mb-3"><i class="bi bi-receipt text-success me-2"></i>Payment history</h5>
+    <div class="card"><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Date</th><th>Plan</th><th>Amount</th><th>Method</th><th>Transaction</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td>{{ item.payment_date }}</td>
+                <td>{{ item.membership_plan.name|default:'—' }}</td>
+                <td>₹{{ item.amount }}</td>
+                <td>{{ item.payment_method|default:'—' }}</td>
+                <td class="small">{{ item.transaction_id|default:'—' }}</td>
+                <td>
+                  {% if item.status == 'Paid' %}<span class="badge badge-soft-success">Paid</span>
+                  {% elif item.status == 'Pending' %}<span class="badge badge-soft-warning">Pending</span>
+                  {% else %}<span class="badge badge-soft-danger">Overdue</span>{% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" class="text-center text-muted py-4">No payments yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+
+  <div class="col-lg-4">
+    <h5 class="mb-3"><i class="bi bi-bell text-success me-2"></i>Alerts</h5>
+    <div class="card"><div class="card-body p-0">
+      {% for alert in alerts %}
+        <div class="px-3 py-3 border-bottom">
+          <div class="small {% if not alert.is_read %}fw-bold{% endif %}">{{ alert.message }}</div>
+          <div class="small text-muted mt-1">Due: {{ alert.due_date|default:'—' }} · {{ alert.created_at|date:'d M Y' }}</div>
+        </div>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-check-circle"></i>No alerts — you are all clear!</div>
+      {% endfor %}
+    </div></div>
+    <div class="disclaimer-box mt-3">
+      <i class="bi bi-info-circle me-1"></i>Demo mode: "Pay now" records a payment through a simulated gateway. A real payment gateway (e.g. Stripe/Razorpay) can be plugged in later.
+    </div>
+  </div>
+</div>
+{% endblock %}

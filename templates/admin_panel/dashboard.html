@@ -1,0 +1,51 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Admin Dashboard — All-in-One Fitness{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><a href="{% url 'manage_users' %}" class="stat-card text-decoration-none"><div class="stat-icon"><i class="bi bi-people"></i></div><div><div class="num">{{ total_users }}</div><div class="lbl">Total users</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'manage_trainers' %}" class="stat-card text-decoration-none"><div class="stat-icon blue"><i class="bi bi-person-badge"></i></div><div><div class="num">{{ total_trainers }}</div><div class="lbl">Trainers</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'manage_experts' %}" class="stat-card text-decoration-none"><div class="stat-icon purple"><i class="bi bi-person-hearts"></i></div><div><div class="num">{{ total_experts }}</div><div class="lbl">Experts</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'manage_batches' %}" class="stat-card text-decoration-none"><div class="stat-icon amber"><i class="bi bi-layers"></i></div><div><div class="num">{{ active_memberships }}</div><div class="lbl">Active memberships</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'payment_reports' %}" class="stat-card text-decoration-none"><div class="stat-icon red"><i class="bi bi-exclamation-triangle"></i></div><div><div class="num">{{ pending_payments }}</div><div class="lbl">Pending payments</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'manage_events' %}" class="stat-card text-decoration-none"><div class="stat-icon"><i class="bi bi-calendar-event"></i></div><div><div class="num">{{ upcoming_events }}</div><div class="lbl">Upcoming events</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'payment_reports' %}" class="stat-card text-decoration-none"><div class="stat-icon blue"><i class="bi bi-cash-stack"></i></div><div><div class="num">₹{{ total_collected }}</div><div class="lbl">Total collected</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'feedback_list' %}" class="stat-card text-decoration-none"><div class="stat-icon amber"><i class="bi bi-chat-square-text"></i></div><div><div class="num">{{ open_feedback }}</div><div class="lbl">Open feedback</div></div></a></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card mb-4"><div class="card-header">Monthly revenue (last 6 months)</div><div class="card-body"><canvas id="revenueChart" height="110"></canvas></div></div>
+    <div class="card"><div class="card-header">Users by batch</div><div class="card-body"><canvas id="batchChart" height="110"></canvas></div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card mb-4"><div class="card-header">Attendance summary</div><div class="card-body"><canvas id="attendanceChart" height="120"></canvas></div></div>
+    <div class="card"><div class="card-header">Feedback ratings</div><div class="card-body">
+      <div class="d-flex align-items-center gap-3 mb-3">
+        <div class="display-5 fw-bold text-success">{{ feedback_avg|floatformat:1 }}</div>
+        <div><div class="small text-muted">average of {{ feedback_total }} ratings</div><div class="text-warning">★★★★★</div></div>
+      </div>
+      <canvas id="ratingChart" height="90"></canvas>
+    </div></div>
+  </div>
+</div>
+
+<div class="card mt-4"><div class="card-header">Recent activity</div><div class="card-body p-0">
+  {% for log in recent_logs %}
+    <div class="d-flex justify-content-between px-3 py-2 border-bottom small">
+      <span><i class="bi bi-dot text-success"></i><strong>{{ log.action }}</strong> — {{ log.description|default:'' }}</span>
+      <span class="text-muted">{{ log.user.username|default:'system' }} · {{ log.created_at|timesince }} ago</span>
+    </div>
+  {% empty %}
+    <div class="empty-state"><i class="bi bi-clock-history"></i>No activity yet.</div>
+  {% endfor %}
+</div></div>
+{% endblock %}
+{% block extra_js %}
+<script>
+new Chart(document.getElementById('revenueChart'), { type: 'bar', data: { labels: {{ month_labels|safe }}, datasets: [{ label: 'Revenue (₹)', data: {{ month_revenue|safe }}, backgroundColor: '#16a34a', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+new Chart(document.getElementById('batchChart'), { type: 'bar', data: { labels: {{ batch_labels|safe }}, datasets: [{ label: 'Members', data: {{ batch_counts|safe }}, backgroundColor: '#2563eb', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+new Chart(document.getElementById('attendanceChart'), { type: 'doughnut', data: { labels: {{ attendance_labels|safe }}, datasets: [{ data: {{ attendance_counts|safe }}, backgroundColor: ['#16a34a', '#dc2626'] }] } });
+new Chart(document.getElementById('ratingChart'), { type: 'bar', data: { labels: {{ rating_labels|safe }}, datasets: [{ label: 'Count', data: {{ rating_counts|safe }}, backgroundColor: '#d97706', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+</script>
+{% endblock %}

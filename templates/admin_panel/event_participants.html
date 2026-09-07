@@ -1,0 +1,31 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ event.title }} Participants — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ event.title }} · Participants{% endblock %}
+{% block content %}
+<div class="card mb-4"><div class="card-body d-flex flex-wrap gap-3">
+  <span class="badge badge-soft-info"><i class="bi bi-people me-1"></i>{{ page_obj.paginator.count }} registered</span>
+  <span class="badge badge-soft-warning"><i class="bi bi-door-open me-1"></i>Capacity {{ event.capacity }}</span>
+  <a href="{% url 'manage_events' %}" class="btn btn-sm btn-outline-secondary ms-auto">Back</a>
+</div></div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>#</th><th>Participant</th><th>Email</th><th>Registered at</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for registration in page_obj %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ registration.user.get_full_name|default:registration.user.username }}</td>
+            <td>{{ registration.user.email }}</td>
+            <td>{{ registration.registered_at|date:'d M Y H:i' }}</td>
+            <td><span class="badge badge-soft-success">{{ registration.status }}</span></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No registrations yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

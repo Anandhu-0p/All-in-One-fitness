@@ -1,0 +1,36 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ target.get_full_name|default:target.username }} — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ target.get_full_name|default:target.username }}{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card"><div class="card-body">
+      <div class="text-center mb-3">
+        {% if profile and profile.profile_image %}
+          <span class="avatar mb-2" style="width:88px;height:88px;font-size:1.8rem"><img src="{{ profile.profile_image.url }}" alt=""></span>
+        {% else %}
+          <span class="avatar mb-2" style="width:88px;height:88px;font-size:1.8rem">{{ target.get_full_name|default:target.username|slice:":1" }}</span>
+        {% endif %}
+        <h5>{{ target.get_full_name|default:target.username }}</h5>
+        <div class="small text-muted">{{ target.email }}</div>
+        <a href="{% url 'chat_start' 'user' target.id %}" class="btn btn-outline-brand btn-sm mt-3"><i class="bi bi-chat-dots me-1"></i>Message member</a>
+      </div>
+      <div class="border-top pt-3">
+        <div class="small text-muted text-uppercase fw-bold mb-2">Nutrition-relevant info</div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Fitness goal</span><strong>{{ profile.fitness_goal|default:'—' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Activity level</span><strong>{{ profile.activity_level|default:'—' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Dietary preference</span><strong>{{ profile.dietary_preference|default:'—' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Allergies</span><strong>{{ profile.allergies|default:'None' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Height</span><strong>{{ latest_health.height|default:'—' }} cm</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Weight</span><strong>{{ latest_health.weight|default:'—' }} kg</strong></div>
+      </div>
+    </div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card"><div class="card-header">Medical notes (private)</div><div class="card-body">
+      <p class="small text-muted">{{ profile.medical_notes|default:'No medical notes provided.' }}</p>
+      <div class="disclaimer-box"><i class="bi bi-shield-lock me-1"></i>This information is shared for better dietary guidance. Handle it with care and never disclose it publicly.</div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

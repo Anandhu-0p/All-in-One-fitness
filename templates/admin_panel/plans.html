@@ -1,0 +1,29 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Fee Plans — All-in-One Fitness{% endblock %}
+{% block page_title %}Fee Plans{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  <a href="{% url 'plan_create' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>New plan</a>
+</div>
+<div class="row g-4">
+  {% for plan in plans %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100"><div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h5 class="mb-1">{{ plan.name }}</h5>
+          <span class="badge {% if plan.is_active %}badge-soft-success{% else %}badge-soft-secondary{% endif %}">{{ plan.is_active|yesno:'Active,Inactive' }}</span>
+        </div>
+        <div class="display-5 fw-bold text-success mb-2">₹{{ plan.amount }}</div>
+        <div class="small text-muted mb-3">{{ plan.duration_in_months }} month{{ plan.duration_in_months|pluralize }}</div>
+        <p class="small text-muted">{{ plan.description|truncatewords:18 }}</p>
+        <div class="table-actions">
+          <a href="{% url 'plan_edit' plan.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+          <a href="{% url 'plan_delete' plan.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Delete or deactivate this plan?">Delete</a>
+        </div>
+      </div></div>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="empty-state card"><i class="bi bi-tags"></i>No membership plans yet.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}

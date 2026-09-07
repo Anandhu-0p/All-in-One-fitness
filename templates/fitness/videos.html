@@ -1,2 +1,48 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Fitness videos</h1>{% for video in videos %}<div class="card p-3 mb-2"><h2>{{ video.title }}</h2><p>{{ video.description }}</p></div>{% empty %}<p>No active videos found.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Videos — All-in-One Fitness{% endblock %}
+{% block page_title %}Videos{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap gap-2 mb-4">
+  <a href="{% url 'fitness_videos' %}" class="btn btn-sm {% if not category %}btn-brand{% else %}btn-outline-brand{% endif %}">All</a>
+  {% for cat in categories %}
+    {% if cat %}
+      <a href="?category={{ cat|urlencode }}" class="btn btn-sm {% if category == cat %}btn-brand{% else %}btn-outline-brand{% endif %}">{{ cat }}</a>
+    {% endif %}
+  {% endfor %}
+</div>
+<div class="row g-4">
+  {% for video in videos %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100">
+        <div class="video-thumb">
+          {% if video.thumbnail %}<img src="{{ video.thumbnail.url }}" alt="{{ video.title }}">{% endif %}
+          <a class="play" href="{{ video.video_url|default:'#' }}" {% if video.video_url %}target="_blank" rel="noopener"{% endif %} data-upload-url="{% if video.uploaded_file %}{{ video.uploaded_file.url }}{% endif %}">
+            <i class="bi bi-play-circle-fill"></i>
+          </a>
+        </div>
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <h6 class="mb-1">{{ video.title }}</h6>
+            <span class="badge badge-soft-info">{{ video.category|default:'Fitness' }}</span>
+          </div>
+          <p class="small text-muted mb-2">{{ video.description|truncatewords:22 }}</p>
+          <div class="small text-muted">by {{ video.uploaded_by_expert.full_name }} · {{ video.created_at|date:'d M Y' }}</div>
+          {% if video.uploaded_file %}
+            <a href="{{ video.uploaded_file.url }}" class="btn btn-sm btn-outline-brand mt-2" download><i class="bi bi-download me-1"></i>Download</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12"><div class="empty-state card"><i class="bi bi-play-circle"></i>No videos available yet.</div></div>
+  {% endfor %}
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelectorAll('.video-thumb a.play').forEach(function (link) {
+  var uploadUrl = link.getAttribute('data-upload-url');
+  if (uploadUrl) link.href = uploadUrl; // point to uploaded file when no external url
+});
+</script>
+{% endblock %}

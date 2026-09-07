@@ -1,2 +1,30 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>My Profile</h1><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button class="btn btn-primary">Save profile</button></form><a href="{% url 'change_password' %}">Change password</a></div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}My Profile — All-in-One Fitness{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card"><div class="card-body text-center">
+      {% if profile.profile_image %}
+        <span class="avatar mb-3" style="width:96px;height:96px;font-size:2rem"><img src="{{ profile.profile_image.url }}" alt=""></span>
+      {% else %}
+        <span class="avatar mb-3" style="width:96px;height:96px;font-size:2rem">{{ profile.full_name|default:user.username|slice:":1" }}</span>
+      {% endif %}
+      <h5 class="mb-1">{{ profile.full_name|default:user.username }}</h5>
+      <div class="small text-muted mb-2">{{ current_role|default:'Member' }}</div>
+      <div class="small text-muted"><i class="bi bi-envelope me-1"></i>{{ user.email|default:'—' }}</div>
+      <div class="small text-muted"><i class="bi bi-telephone me-1"></i>{{ profile.mobile_number|default:'—' }}</div>
+      <div class="small text-muted"><i class="bi bi-geo-alt me-1"></i>{{ profile.address|default:'—' }}</div>
+    </div></div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card"><div class="card-header">Edit profile</div><div class="card-body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <button type="submit" class="btn btn-brand">Save changes</button>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

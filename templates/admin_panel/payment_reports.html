@@ -1,0 +1,90 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Payment Reports — All-in-One Fitness{% endblock %}
+{% block page_title %}Payment Reports{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon"><i class="bi bi-cash-stack"></i></div><div><div class="num">₹{{ total_collected }}</div><div class="lbl">Collected (filtered)</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon amber"><i class="bi bi-hourglass-split"></i></div><div><div class="num">₹{{ total_pending }}</div><div class="lbl">Pending (filtered)</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon blue"><i class="bi bi-receipt"></i></div><div><div class="num">{{ page_obj.paginator.count }}</div><div class="lbl">Payments shown</div></div></div></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'due_payments' %}" class="stat-card text-decoration-none"><div class="stat-icon red"><i class="bi bi-exclamation-triangle"></i></div><div><div class="num">Due</div><div class="lbl">Due list</div></div></a></div>
+</div>
+
+<div class="card mb-4"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-3"><label class="form-label">Month</label>
+      <select name="month" class="form-select">
+        <option value="">All months</option>
+        {% for m in months %}<option value="{{ m }}" {% if month == m %}selected{% endif %}>{{ m }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><label class="form-label">Year</label>
+      <select name="year" class="form-select">
+        <option value="">All years</option>
+        {% for y in years %}<option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2"><label class="form-label">Status</label>
+      <select name="status" class="form-select">
+        <option value="">All</option>
+        <option value="Paid" {% if status == 'Paid' %}selected{% endif %}>Paid</option>
+        <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
+        <option value="Overdue" {% if status == 'Overdue' %}selected{% endif %}>Overdue</option>
+      </select>
+    </div>
+    <div class="col-md-3"><label class="form-label">Search</label>
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="User or transaction…">
+    </div>
+    <div class="col-md-2 d-flex gap-2">
+      <button class="btn btn-brand w-100">Filter</button>
+      {% if month or year or status or q %}<a href="{% url 'payment_reports' %}" class="btn btn-outline-secondary">Clear</a>{% endif %}
+    </div>
+  </form>
+</div></div>
+
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Date</th><th>User</th><th>Plan</th><th>Amount</th><th>Method</th><th>Transaction</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for payment in page_obj %}
+          <tr>
+            <td>{{ payment.payment_date }}</td>
+            <td>{{ payment.user.get_full_name|default:payment.user.username }}</td>
+            <td>{{ payment.membership_plan.name|default:'—' }}</td>
+            <td><strong>₹{{ payment.amount }}</strong></td>
+            <td>{{ payment.payment_method|default:'—' }}</td>
+            <td class="small">{{ payment.transaction_id|default:'—' }}</td>
+            <td><span class="badge {% if payment.status == 'Paid' %}badge-soft-success{% elif payment.status == 'Pending' %}badge-soft-warning{% else %}badge-soft-danger{% endif %}">{{ payment.status }}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#payModal{{ payment.id }}">Update</button>
+              <div class="modal fade" id="payModal{{ payment.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog"><div class="modal-content">
+                  <form method="post" action="{% url 'payment_status' payment.id %}">
+                    {% csrf_token %}
+                    <div class="modal-header"><h5 class="modal-title">Update payment #{{ payment.id }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                    <div class="modal-body">
+                      <div class="mb-3"><label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                          <option value="Paid" {% if payment.status == 'Paid' %}selected{% endif %}>Paid</option>
+                          <option value="Pending" {% if payment.status == 'Pending' %}selected{% endif %}>Pending</option>
+                          <option value="Overdue" {% if payment.status == 'Overdue' %}selected{% endif %}>Overdue</option>
+                        </select>
+                      </div>
+                      <div class="mb-3"><label class="form-label">Method</label><input name="payment_method" class="form-control" value="{{ payment.payment_method }}"></div>
+                      <div class="mb-3"><label class="form-label">Transaction id</label><input name="transaction_id" class="form-control" value="{{ payment.transaction_id }}"></div>
+                    </div>
+                    <div class="modal-footer"><button type="submit" class="btn btn-brand">Save</button></div>
+                  </form>
+                </div></div>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="text-center text-muted py-4">No payments match the filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

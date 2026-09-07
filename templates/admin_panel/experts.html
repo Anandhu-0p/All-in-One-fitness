@@ -1,0 +1,49 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Expert Management — All-in-One Fitness{% endblock %}
+{% block page_title %}Expert Management{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <form method="get" class="d-flex gap-2">
+    <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search experts…" style="width:260px">
+    <button class="btn btn-sm btn-brand">Search</button>
+  </form>
+  <a href="{% url 'expert_add' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>Add expert</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Expert</th><th>Specialization</th><th>Qualification</th><th>Plans</th><th>Videos</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for expert in page_obj %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                {% if expert.profile_image %}<span class="avatar avatar-sm"><img src="{{ expert.profile_image.url }}" alt=""></span>
+                {% else %}<span class="avatar avatar-sm">{{ expert.full_name|slice:":1" }}</span>{% endif %}
+                <div><strong class="small d-block">{{ expert.full_name }}</strong><span class="small text-muted">{{ expert.user.email }}</span></div>
+              </div>
+            </td>
+            <td>{{ expert.specialization|default:'—' }}</td>
+            <td>{{ expert.qualification|default:'—' }}</td>
+            <td>{{ expert.diet_plans.count }}</td>
+            <td>{{ expert.uploaded_videos.count }}</td>
+            <td>{% if expert.is_active %}<span class="badge badge-soft-success">Active</span>{% else %}<span class="badge badge-soft-danger">Inactive</span>{% endif %}</td>
+            <td class="table-actions">
+              <a href="{% url 'expert_edit' expert.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+              {% if expert.is_active %}
+                <a href="{% url 'expert_toggle' expert.id %}" class="btn btn-sm btn-outline-warning">Deactivate</a>
+              {% else %}
+                <a href="{% url 'expert_toggle' expert.id %}" class="btn btn-sm btn-outline-success">Activate</a>
+              {% endif %}
+              <a href="{% url 'expert_delete' expert.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Delete or deactivate this expert?">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">No experts found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

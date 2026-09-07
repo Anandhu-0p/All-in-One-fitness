@@ -1,2 +1,33 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Notifications</h1>{% for item in items %}<div class="alert alert-info">{{ item.message }}</div>{% empty %}<p>No notifications.</p>{% endfor %}<a href="{% url 'feedback_form' %}">Send feedback</a></div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Notifications — All-in-One Fitness{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <div class="d-flex gap-2 flex-wrap">
+    <a href="{% url 'notifications_list' %}" class="btn btn-sm {% if not kind %}btn-brand{% else %}btn-outline-brand{% endif %}">All</a>
+    {% for value, label in notification_types %}
+      <a href="?kind={{ value|urlencode }}" class="btn btn-sm {% if kind == value %}btn-brand{% else %}btn-outline-brand{% endif %}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  <a href="{% url 'notification_mark_all' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-check2-all me-1"></i>Mark all read</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  {% for item in items %}
+    <div class="d-flex align-items-start gap-3 px-3 py-3 border-bottom {% if not item.is_read %}bg-success bg-opacity-10{% endif %}">
+      <i class="bi bi-bell fs-5 text-success mt-1"></i>
+      <div class="flex-grow-1">
+        <div class="d-flex justify-content-between">
+          <strong class="small">{{ item.title }}</strong>
+          <span class="small text-muted">{{ item.created_at|timesince }} ago</span>
+        </div>
+        <div class="small text-muted">{{ item.message }}</div>
+      </div>
+      {% if not item.is_read %}
+        <a href="{% url 'notification_mark_read' item.id %}" class="btn btn-sm btn-outline-brand">Mark read</a>
+      {% endif %}
+    </div>
+  {% empty %}
+    <div class="empty-state"><i class="bi bi-bell-slash"></i>You're all caught up!</div>
+  {% endfor %}
+</div></div>
+{% endblock %}

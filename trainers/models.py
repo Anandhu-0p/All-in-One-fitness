@@ -67,5 +67,13 @@ class Attendance(models.Model):
     status = models.CharField(max_length=20, default='Present')
     notes = models.TextField(blank=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'batch', 'date'],
+                name='unique_attendance_per_user_batch_date',
+            ),
+        ]
+
     def __str__(self):
         return f'{self.user} - {self.date} - {self.status}'

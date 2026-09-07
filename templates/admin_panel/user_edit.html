@@ -1,0 +1,17 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Edit {{ target.username }} — All-in-One Fitness{% endblock %}
+{% block page_title %}Edit User{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card"><div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <button type="submit" class="btn btn-brand">Save changes</button>
+        <a href="{% url 'user_detail' target.id %}" class="btn btn-outline-secondary">Cancel</a>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

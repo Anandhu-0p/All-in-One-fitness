@@ -1,0 +1,70 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ target.get_full_name|default:target.username }} — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ target.get_full_name|default:target.username }}{% endblock %}
+{% block content %}
+<div class="d-flex gap-2 mb-3 flex-wrap">
+  <a href="{% url 'user_edit' target.id %}" class="btn btn-brand btn-sm"><i class="bi bi-pencil me-1"></i>Edit</a>
+  <a href="{% url 'user_batch' target.id %}" class="btn btn-outline-brand btn-sm"><i class="bi bi-layers me-1"></i>Allocate batch</a>
+  {% if target.is_active %}
+    <a href="{% url 'user_toggle' target.id %}" class="btn btn-outline-warning btn-sm">Deactivate</a>
+  {% else %}
+    <a href="{% url 'user_toggle' target.id %}" class="btn btn-outline-success btn-sm">Activate</a>
+  {% endif %}
+  <a href="{% url 'user_delete' target.id %}" class="btn btn-outline-danger btn-sm" data-confirm="Remove this user (soft delete, history kept)?">Remove</a>
+  <a href="{% url 'manage_users' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+</div>
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card"><div class="card-body">
+      <div class="text-center mb-3">
+        {% if profile and profile.profile_image %}
+          <span class="avatar mb-2" style="width:88px;height:88px;font-size:1.8rem"><img src="{{ profile.profile_image.url }}" alt=""></span>
+        {% else %}
+          <span class="avatar mb-2" style="width:88px;height:88px;font-size:1.8rem">{{ target.get_full_name|default:target.username|slice:":1" }}</span>
+        {% endif %}
+        <h5>{{ target.get_full_name|default:target.username }}</h5>
+        <div class="small text-muted">{{ target.email }}</div>
+        <div class="mt-2">
+          {% if target.is_active %}<span class="badge badge-soft-success">Active</span>{% else %}<span class="badge badge-soft-danger">Inactive</span>{% endif %}
+          <span class="badge badge-soft-info">{{ target.groups.all.0.name|default:'Member' }}</span>
+        </div>
+      </div>
+      <div class="border-top pt-3">
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Mobile</span><strong>{{ profile.mobile_number|default:'—' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Fitness goal</span><strong>{{ profile.fitness_goal|default:'—' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Activity level</span><strong>{{ profile.activity_level|default:'—' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Dietary preference</span><strong>{{ profile.dietary_preference|default:'—' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Allergies</span><strong>{{ profile.allergies|default:'None' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Joined</span><strong>{{ target.date_joined|date:'d M Y' }}</strong></div>
+        <div class="d-flex justify-content-between small py-1"><span class="text-muted">Last login</span><strong>{{ target.last_login|date:'d M Y H:i'|default:'Never' }}</strong></div>
+      </div>
+    </div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card mb-4"><div class="card-header">Batches</div><div class="card-body p-0">
+      {% for membership in memberships %}
+        <div class="d-flex justify-content-between px-3 py-2 border-bottom small">
+          <span><strong>{{ membership.batch.name }}</strong> <span class="text-muted">({{ membership.joined_date }})</span></span>
+          <span class="badge {% if membership.status == 'Active' %}badge-soft-success{% else %}badge-soft-secondary{% endif %}">{{ membership.status }}</span>
+        </div>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-layers"></i>Not assigned to any batch.</div>
+      {% endfor %}
+    </div></div>
+    <div class="card"><div class="card-header">Recent payments</div><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Date</th><th>Plan</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for payment in payments %}
+              <tr><td>{{ payment.payment_date }}</td><td>{{ payment.membership_plan.name|default:'—' }}</td><td>₹{{ payment.amount }}</td><td><span class="badge {% if payment.status == 'Paid' %}badge-soft-success{% elif payment.status == 'Pending' %}badge-soft-warning{% else %}badge-soft-danger{% endif %}">{{ payment.status }}</span></td></tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-center text-muted py-3">No payments.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

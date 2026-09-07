@@ -1,0 +1,53 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Batch Members — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ batch.name }} · Members{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card"><div class="card-header">Add members</div><div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {% for checkbox in form.users %}
+            <div class="form-check">
+              {{ checkbox.tag }}
+              <label class="form-check-label small" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+            </div>
+          {% empty %}
+            <p class="small text-muted">All active users are already in this batch.</p>
+          {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-brand">Add selected</button>
+        <a href="{% url 'batch_detail' batch.id %}" class="btn btn-outline-secondary">Back</a>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card"><div class="card-header">Current members ({{ members|length }})</div><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Member</th><th>Joined</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            {% for membership in members %}
+              <tr>
+                <td>{{ membership.user.get_full_name|default:membership.user.username }}</td>
+                <td>{{ membership.joined_date }}</td>
+                <td><span class="badge badge-soft-success">{{ membership.status }}</span></td>
+                <td>
+                  <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="remove_user" value="{{ membership.user_id }}">
+                    <button class="btn btn-sm btn-outline-danger" data-confirm="Remove {{ membership.user.get_full_name|default:membership.user.username }} from this batch?">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-center text-muted py-4">No members yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

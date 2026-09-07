@@ -1,0 +1,50 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Batch Trainers — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ batch.name }} · Trainers{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card"><div class="card-header">Assign trainer</div><div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Trainer</label>
+          <select name="trainer" class="form-select">
+            <option value="">Select a trainer…</option>
+            {% for trainer in available %}<option value="{{ trainer.id }}">{{ trainer.full_name }} — {{ trainer.specialization|default:'General' }}</option>{% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-brand">Assign trainer</button>
+        <a href="{% url 'batch_detail' batch.id %}" class="btn btn-outline-secondary">Back</a>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card"><div class="card-header">Assigned trainers ({{ assignments|length }})</div><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Trainer</th><th>Assigned</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            {% for assignment in assignments %}
+              <tr>
+                <td>{{ assignment.trainer.full_name }}</td>
+                <td>{{ assignment.assigned_date }}</td>
+                <td><span class="badge badge-soft-success">{{ assignment.status }}</span></td>
+                <td>
+                  <form method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="remove_trainer" value="{{ assignment.trainer_id }}">
+                    <button class="btn btn-sm btn-outline-danger" data-confirm="Remove this trainer from the batch?">Remove</button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-center text-muted py-4">No trainers assigned.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

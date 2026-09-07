@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Features — All-in-One Fitness{% endblock %}
+{% block content %}
+<section class="section pt-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <p class="section-kicker mb-2">Features</p>
+      <h1 class="display-4 fw-bold">Everything, <span class="text-success">built in</span></h1>
+      <p class="text-muted mx-auto mt-3" style="max-width:660px">{{ features_text|default:'From first-timers to advanced athletes, our platform adapts to your goals.' }}</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="bi bi-person-video3"></i></div><h5>Workout plans</h5><p class="text-muted small mb-0">Detailed plans with exercises, sets, reps, rest times and video demos — created and assigned by your trainer.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon blue"><i class="bi bi-egg-fried"></i></div><h5>Diet plans</h5><p class="text-muted small mb-0">Goal-based meal plans with calorie budgets, created by certified nutrition experts and aware of your allergies.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon amber"><i class="bi bi-play-circle"></i></div><h5>Video library</h5><p class="text-muted small mb-0">Instructional and motivational videos with thumbnails, categories and both streaming URLs and uploads.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon purple"><i class="bi bi-lightbulb"></i></div><h5>Wellness tips</h5><p class="text-muted small mb-0">Articles on nutrition, sleep, mental health and lifestyle from experts (educational, not medical advice).</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="bi bi-calendar-check"></i></div><h5>Attendance</h5><p class="text-muted small mb-0">Trainers mark daily attendance per batch; members see their percentages and full history.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon blue"><i class="bi bi-graph-up-arrow"></i></div><h5>Progress tracking</h5><p class="text-muted small mb-0">Weight, waist, body-fat and BMI trends with interactive charts for members and trainers.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon amber"><i class="bi bi-calendar-event"></i></div><h5>Events</h5><p class="text-muted small mb-0">Workshops and bootcamps with capacity limits, one-tap registration and participant lists.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon purple"><i class="bi bi-credit-card"></i></div><h5>Membership &amp; payments</h5><p class="text-muted small mb-0">Plans, payment history, month/year reports, total collections and friendly due reminders.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon"><i class="bi bi-chat-dots"></i></div><h5>Private chat</h5><p class="text-muted small mb-0">Direct messaging between members, their trainer and experts — with file attachments.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon blue"><i class="bi bi-bell"></i></div><h5>Notifications</h5><p class="text-muted small mb-0">Alerts for new assignments, events, payment reminders and feedback responses — with a bell in the top bar.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon amber"><i class="bi bi-chat-square-text"></i></div><h5>Feedback</h5><p class="text-muted small mb-0">Submit ratings and complaints; administrators respond and resolve them, and you get notified.</p></div></div>
+      <div class="col-md-4"><div class="feature-card"><div class="feature-icon purple"><i class="bi bi-speedometer2"></i></div><h5>Admin analytics</h5><p class="text-muted small mb-0">Dashboards with revenue, attendance, events, users-by-batch and feedback ratings.</p></div></div>
+    </div>
+  </div>
+</section>
+{% endblock %}

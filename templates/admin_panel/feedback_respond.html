@@ -1,0 +1,26 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Respond to Feedback — All-in-One Fitness{% endblock %}
+{% block page_title %}Respond to Feedback{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card"><div class="card-body">
+      <span class="badge badge-soft-secondary mb-2">{{ feedback.rating }}/5</span>
+      <h5>{{ feedback.subject }}</h5>
+      <p class="small text-muted">by {{ feedback.user.get_full_name|default:feedback.user.username }} · {{ feedback.created_at|date:'d M Y H:i' }}</p>
+      <p>{{ feedback.message }}</p>
+    </div></div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card"><div class="card-header">Your response</div><div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <div class="form-text mb-3">The user will receive a notification when you save a response.</div>
+        <button type="submit" class="btn btn-brand">Save response</button>
+        <a href="{% url 'feedback_list' %}" class="btn btn-outline-secondary">Back</a>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

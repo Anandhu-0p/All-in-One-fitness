@@ -1,2 +1,59 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Trainer report</h1>{% for entry in attendance_summary %}<p>{{ entry }}</p>{% empty %}<p>No attendance summary available.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Trainer Reports — All-in-One Fitness{% endblock %}
+{% block page_title %}Reports{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card mb-4"><div class="card-header">Batch attendance percentage</div><div class="card-body">
+      <div class="mb-3">
+        {% for b in batch_attendance %}
+          <div class="d-flex justify-content-between small mb-1"><span>{{ b.batch }} <span class="text-muted">({{ b.present }}/{{ b.total }})</span></span><strong>{{ b.percentage }}%</strong></div>
+          <div class="progress mb-3"><div class="progress-bar" style="width:{{ b.percentage }}%"></div></div>
+        {% empty %}
+          <div class="empty-state"><i class="bi bi-calendar-x"></i>No attendance data yet.</div>
+        {% endfor %}
+      </div>
+    </div></div>
+    <div class="card"><div class="card-header">Workout plans &amp; assignments</div><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Plan</th><th>Exercises</th><th>Assigned to</th></tr></thead>
+          <tbody>
+            {% for plan in plan_counts %}
+              <tr><td>{{ plan.title }}</td><td>{{ plan.exercises }}</td><td>{{ plan.assigned }} user(s)</td></tr>
+            {% empty %}
+              <tr><td colspan="3" class="text-center text-muted py-3">No workout plans yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card"><div class="card-header">Member weight progress</div><div class="card-body">
+      <form method="get" class="mb-3">
+        <label class="form-label">Select member</label>
+        <select name="member" class="form-select" onchange="this.form.submit()">
+          <option value="">Choose a member…</option>
+          {% for member in members %}
+            <option value="{{ member.id }}" {% if member_id == member.id|stringformat:'s' %}selected{% endif %}>{{ member.get_full_name|default:member.username }}</option>
+          {% endfor %}
+        </select>
+      </form>
+      {% if selected_member %}
+        <h6 class="small text-muted">{{ selected_member.get_full_name|default:selected_member.username }}</h6>
+        <canvas id="weightChart" height="150"></canvas>
+      {% else %}
+        <div class="empty-state"><i class="bi bi-graph-up"></i>Select a member to see their weight trend.</div>
+      {% endif %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+{% if selected_member %}
+<script>
+new Chart(document.getElementById('weightChart'), { type: 'line', data: { labels: {{ weight_labels|safe }}, datasets: [{ label: 'Weight (kg)', data: {{ weight_values|safe }}, borderColor: '#16a34a', backgroundColor: '#16a34a22', fill: true, tension: .35 }] }, options: { plugins: { legend: { display: false } } } });
+</script>
+{% endif %}
+{% endblock %}

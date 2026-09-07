@@ -1,0 +1,67 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}User Management — All-in-One Fitness{% endblock %}
+{% block page_title %}User Management{% endblock %}
+{% block content %}
+<div class="card mb-4"><div class="card-body">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-md-5">
+      <label class="form-label">Search</label>
+      <input type="text" name="q" value="{{ filters.q }}" class="form-control" placeholder="Name, username or email…">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Role</label>
+      <select name="role" class="form-select">
+        <option value="">All roles</option>
+        <option value="User" {% if filters.role == 'User' %}selected{% endif %}>User</option>
+        <option value="Trainer" {% if filters.role == 'Trainer' %}selected{% endif %}>Trainer</option>
+        <option value="Expert" {% if filters.role == 'Expert' %}selected{% endif %}>Expert</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Status</label>
+      <select name="status" class="form-select">
+        <option value="">All</option>
+        <option value="active" {% if filters.status == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if filters.status == 'inactive' %}selected{% endif %}>Inactive</option>
+      </select>
+    </div>
+    <div class="col-md-2 d-flex gap-2">
+      <button class="btn btn-brand w-100">Filter</button>
+    </div>
+  </form>
+</div></div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Status</th><th>Batch</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for u in page_obj %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span class="avatar avatar-sm">{{ u.get_full_name|default:u.username|slice:":1" }}</span>
+                <strong class="small">{{ u.get_full_name|default:u.username }}</strong>
+              </div>
+            </td>
+            <td>{{ u.email }}</td>
+            <td>
+              {% if u.groups.all %}<span class="badge badge-soft-info">{{ u.groups.all.0.name }}</span>
+              {% else %}<span class="badge badge-soft-secondary">—</span>{% endif %}
+            </td>
+            <td>{% if u.is_active %}<span class="badge badge-soft-success">Active</span>{% else %}<span class="badge badge-soft-danger">Inactive</span>{% endif %}</td>
+            <td>{{ u.batch_memberships.first.batch.name|default:'—' }}</td>
+            <td>{{ u.date_joined|date:'d M Y' }}</td>
+            <td class="table-actions">
+              <a href="{% url 'user_detail' u.id %}" class="btn btn-sm btn-outline-brand">View</a>
+              <a href="{% url 'user_batch' u.id %}" class="btn btn-sm btn-outline-secondary">Batch</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">No users found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

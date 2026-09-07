@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Our Trainers — All-in-One Fitness{% endblock %}
+{% block content %}
+<section class="section pt-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <p class="section-kicker mb-2">Coaching team</p>
+      <h1 class="display-4 fw-bold">Meet our <span class="text-success">trainers</span></h1>
+      <p class="text-muted mx-auto mt-3" style="max-width:620px">Certified coaches who run batches, build workout plans, mark attendance and track your progress.</p>
+    </div>
+    <div class="row g-4">
+      {% for trainer in trainers %}
+        <div class="col-md-6 col-lg-4">
+          <div class="team-card text-center">
+            {% if trainer.profile_image %}
+              <span class="avatar mb-3" style="width:84px;height:84px;font-size:1.8rem"><img src="{{ trainer.profile_image.url }}" alt="{{ trainer.full_name }}"></span>
+            {% else %}
+              <span class="avatar mb-3" style="width:84px;height:84px;font-size:1.8rem">{{ trainer.full_name|slice:":1" }}</span>
+            {% endif %}
+            <h5>{{ trainer.full_name }}</h5>
+            <div class="small text-muted mb-2">{{ trainer.specialization|default:'Fitness coach' }}</div>
+            <div class="small text-muted mb-3">{{ trainer.qualification|default:'' }}</div>
+            {% if trainer.bio %}<p class="small text-muted">{{ trainer.bio|truncatewords:26 }}</p>{% endif %}
+            <div class="d-flex justify-content-center gap-2 flex-wrap">
+              <span class="badge badge-soft-success">{{ trainer.experience }} yr experience</span>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12"><div class="empty-state"><i class="bi bi-people"></i>No trainers listed yet — check back soon.</div></div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-5">
+      <a href="{% url 'register' %}" class="btn btn-brand btn-lg">Join a batch with them</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

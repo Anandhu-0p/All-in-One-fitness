@@ -1,0 +1,29 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ mode }} — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ mode }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <div class="card"><div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <h6 class="mt-4 mb-3"><i class="bi bi-list-ol text-success me-1"></i>Exercises</h6>
+        <div class="row g-3">
+          {{ formset.management_form }}
+          {% for form in formset %}
+            <div class="border rounded p-3 mb-3 exercise-row">
+              {% include 'partials/form.html' %}
+            </div>
+          {% endfor %}
+        </div>
+        {% if formset.non_form_errors %}
+          <div class="alert alert-danger py-2 small">{% for e in formset.non_form_errors %}{{ e }}{% endfor %}</div>
+        {% endif %}
+        <button type="submit" class="btn btn-brand mt-3">Save plan</button>
+        <a href="{% url 'trainer_workout_plans' %}" class="btn btn-outline-secondary mt-3">Cancel</a>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

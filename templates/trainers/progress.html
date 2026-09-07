@@ -1,0 +1,30 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Progress Tracking — All-in-One Fitness{% endblock %}
+{% block page_title %}Progress Tracking{% endblock %}
+{% block content %}
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Member</th><th>Batch</th><th>Measurements</th><th>Latest weight</th><th>Latest waist</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for membership in page_obj %}
+          <tr>
+            <td><strong class="small">{{ membership.user.get_full_name|default:membership.user.username }}</strong></td>
+            <td>{{ membership.batch.name }}</td>
+            <td><span class="badge badge-soft-info">{{ membership.record_count }}</span></td>
+            <td>{{ membership.user.progress_records.first.weight|default:'—' }} kg</td>
+            <td>{{ membership.user.progress_records.first.waist_measurement|default:'—' }} cm</td>
+            <td class="table-actions">
+              <a href="{% url 'member_health' membership.user.id %}" class="btn btn-sm btn-outline-brand">View history</a>
+              <a href="{% url 'member_progress_add' membership.user.id %}" class="btn btn-sm btn-brand">Add measurement</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-center text-muted py-4">No members assigned to your batches.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

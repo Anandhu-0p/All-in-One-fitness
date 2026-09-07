@@ -1,0 +1,17 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ mode }} — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ mode }} · {{ member.get_full_name|default:member.username }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card"><div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <button type="submit" class="btn btn-brand">Save measurement</button>
+        <a href="{% url 'member_health' member.id %}" class="btn btn-outline-secondary">Cancel</a>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

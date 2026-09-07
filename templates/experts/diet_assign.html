@@ -1,0 +1,43 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Assign {{ plan.title }} — All-in-One Fitness{% endblock %}
+{% block page_title %}Assign Diet Plan{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header">Assign to members</div><div class="card-body">
+      <p class="small text-muted">Select members to assign <strong>{{ plan.title }}</strong> ({{ plan.calories }} kcal/day).</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {% for user in users %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="users" value="{{ user.id }}" id="u{{ user.id }}">
+              <label class="form-check-label small" for="u{{ user.id }}">{{ user.get_full_name|default:user.username }} ({{ user.email }})</label>
+            </div>
+          {% empty %}
+            <p class="small text-muted">All members already have this plan.</p>
+          {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-brand">Assign plan</button>
+        <a href="{% url 'expert_diet_plans' %}" class="btn btn-outline-secondary">Back</a>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header">Assigned to ({{ assigned_users.count }})</div><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>User</th><th>Start</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for a in assigned_users %}
+              <tr><td>{{ a.user.get_full_name|default:a.user.username }}</td><td>{{ a.start_date }}</td><td><span class="badge badge-soft-success">{{ a.status }}</span></td></tr>
+            {% empty %}
+              <tr><td colspan="3" class="text-center text-muted py-4">Not assigned yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

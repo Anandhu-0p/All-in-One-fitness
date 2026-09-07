@@ -1,2 +1,39 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Expert dashboard</h1><p>Welcome, {{ expert.full_name|default:request.user.username }}.</p><p>Diet plans: {{ diet_plans }} | Videos: {{ videos }}</p></div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Expert Dashboard — All-in-One Fitness{% endblock %}
+{% block page_title %}Expert Dashboard{% endblock %}
+{% block content %}
+<div class="disclaimer-box mb-4"><i class="bi bi-info-circle me-1"></i><strong>Disclaimer:</strong> content you publish is educational and does not replace professional medical advice.</div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><a href="{% url 'expert_diet_plans' %}" class="stat-card text-decoration-none"><div class="stat-icon"><i class="bi bi-egg-fried"></i></div><div><div class="num">{{ stats.diet_plans }}</div><div class="lbl">Diet plans</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'expert_videos' %}" class="stat-card text-decoration-none"><div class="stat-icon blue"><i class="bi bi-play-circle"></i></div><div><div class="num">{{ stats.videos }}</div><div class="lbl">Videos</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'expert_tips' %}" class="stat-card text-decoration-none"><div class="stat-icon amber"><i class="bi bi-lightbulb"></i></div><div><div class="num">{{ stats.tips }}</div><div class="lbl">Tips &amp; articles</div></div></a></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon purple"><i class="bi bi-people"></i></div><div><div class="num">{{ stats.assigned_diets }}</div><div class="lbl">Diet assignments</div></div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header d-flex justify-content-between align-items-center"><span>Recent diet plans</span><a class="small" href="{% url 'expert_diet_create' %}">New plan</a></div><div class="card-body p-0">
+      {% for plan in recent_plans %}
+        <div class="d-flex justify-content-between px-3 py-3 border-bottom">
+          <div><strong class="small">{{ plan.title }}</strong><div class="small text-muted">{{ plan.goal|default:'General' }} · {{ plan.calories }} kcal</div></div>
+          <a href="{% url 'expert_diet_edit' plan.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+        </div>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-egg-fried"></i>No diet plans yet.</div>
+      {% endfor %}
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card"><div class="card-header d-flex justify-content-between align-items-center"><span>Recent videos</span><a class="small" href="{% url 'expert_video_create' %}">Add video</a></div><div class="card-body p-0">
+      {% for video in recent_videos %}
+        <div class="d-flex justify-content-between px-3 py-3 border-bottom">
+          <div><strong class="small">{{ video.title }}</strong><div class="small text-muted">{{ video.category|default:'Fitness' }} · {{ video.created_at|date:'d M Y' }}</div></div>
+          <a href="{% url 'expert_video_edit' video.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+        </div>
+      {% empty %}
+        <div class="empty-state"><i class="bi bi-play-circle"></i>No videos yet.</div>
+      {% endfor %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}

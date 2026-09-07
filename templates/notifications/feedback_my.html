@@ -1,0 +1,26 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}My Feedback — All-in-One Fitness{% endblock %}
+{% block page_title %}My Feedback{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3"><a href="{% url 'feedback_form' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>New feedback</a></div>
+<div class="card"><div class="card-body p-0">
+  {% for item in items %}
+    <div class="px-3 py-3 border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <strong class="small">{{ item.subject }}</strong>
+        <div>
+          <span class="badge {% if item.status == 'Resolved' %}badge-soft-success{% elif item.status == 'In Progress' %}badge-soft-warning{% else %}badge-soft-info{% endif %}">{{ item.status }}</span>
+          <span class="badge badge-soft-secondary ms-1">{{ item.rating }}/5</span>
+        </div>
+      </div>
+      <p class="small text-muted mb-2 mt-1">{{ item.message }}</p>
+      <div class="small text-muted">{{ item.created_at|date:'d M Y H:i' }}</div>
+      {% if item.response %}
+        <div class="alert alert-success small mt-2 mb-0"><strong>Response:</strong> {{ item.response }}</div>
+      {% endif %}
+    </div>
+  {% empty %}
+    <div class="empty-state"><i class="bi bi-chat-square-text"></i>You have not submitted any feedback yet.</div>
+  {% endfor %}
+</div></div>
+{% endblock %}

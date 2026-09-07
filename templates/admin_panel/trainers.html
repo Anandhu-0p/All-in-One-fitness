@@ -1,0 +1,49 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Trainer Management — All-in-One Fitness{% endblock %}
+{% block page_title %}Trainer Management{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+  <form method="get" class="d-flex gap-2">
+    <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search trainers…" style="width:260px">
+    <button class="btn btn-sm btn-brand">Search</button>
+  </form>
+  <a href="{% url 'trainer_add' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus me-1"></i>Add trainer</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Trainer</th><th>Specialization</th><th>Experience</th><th>Batches</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for trainer in page_obj %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                {% if trainer.profile_image %}<span class="avatar avatar-sm"><img src="{{ trainer.profile_image.url }}" alt=""></span>
+                {% else %}<span class="avatar avatar-sm">{{ trainer.full_name|slice:":1" }}</span>{% endif %}
+                <div><strong class="small d-block">{{ trainer.full_name }}</strong><span class="small text-muted">{{ trainer.user.email }}</span></div>
+              </div>
+            </td>
+            <td>{{ trainer.specialization|default:'—' }}</td>
+            <td>{{ trainer.experience }} yr</td>
+            <td>{{ trainer.assigned_batches.count }}</td>
+            <td>{% if trainer.is_active %}<span class="badge badge-soft-success">Active</span>{% else %}<span class="badge badge-soft-danger">Inactive</span>{% endif %}</td>
+            <td class="table-actions">
+              <a href="{% url 'trainer_edit' trainer.id %}" class="btn btn-sm btn-outline-brand">Edit</a>
+              <a href="{% url 'trainer_assign_batch' trainer.id %}" class="btn btn-sm btn-outline-secondary">Assign batch</a>
+              {% if trainer.is_active %}
+                <a href="{% url 'trainer_toggle' trainer.id %}" class="btn btn-sm btn-outline-warning">Deactivate</a>
+              {% else %}
+                <a href="{% url 'trainer_toggle' trainer.id %}" class="btn btn-sm btn-outline-success">Activate</a>
+              {% endif %}
+              <a href="{% url 'trainer_delete' trainer.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Delete or deactivate this trainer?">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-center text-muted py-4">No trainers found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

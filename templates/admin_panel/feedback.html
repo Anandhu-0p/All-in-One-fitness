@@ -1,0 +1,35 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Feedback — All-in-One Fitness{% endblock %}
+{% block page_title %}Feedback &amp; Complaints{% endblock %}
+{% block content %}
+<div class="d-flex gap-2 mb-3 flex-wrap">
+  <a href="{% url 'feedback_list' %}" class="btn btn-sm {% if not status %}btn-brand{% else %}btn-outline-brand{% endif %}">All</a>
+  <a href="?status=Open" class="btn btn-sm {% if status == 'Open' %}btn-brand{% else %}btn-outline-brand{% endif %}">Open</a>
+  <a href="?status=In Progress" class="btn btn-sm {% if status == 'In Progress' %}btn-brand{% else %}btn-outline-brand{% endif %}">In Progress</a>
+  <a href="?status=Resolved" class="btn btn-sm {% if status == 'Resolved' %}btn-brand{% else %}btn-outline-brand{% endif %}">Resolved</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  {% for item in page_obj %}
+    <div class="px-3 py-3 border-bottom">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+          <strong class="small">{{ item.subject }}</strong>
+          <div class="small text-muted">by {{ item.user.get_full_name|default:item.user.username }} · {{ item.created_at|date:'d M Y H:i' }}</div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge badge-soft-secondary">{{ item.rating }}/5</span>
+          <span class="badge {% if item.status == 'Resolved' %}badge-soft-success{% elif item.status == 'In Progress' %}badge-soft-warning{% else %}badge-soft-info{% endif %}">{{ item.status }}</span>
+          <a href="{% url 'feedback_respond' item.id %}" class="btn btn-sm btn-brand">Respond</a>
+        </div>
+      </div>
+      <p class="small text-muted mb-1 mt-2">{{ item.message }}</p>
+      {% if item.response %}
+        <div class="alert alert-success small py-2 mb-0"><strong>Response:</strong> {{ item.response }}</div>
+      {% endif %}
+    </div>
+  {% empty %}
+    <div class="empty-state"><i class="bi bi-chat-square-text"></i>No feedback yet.</div>
+  {% endfor %}
+</div></div>
+{% include 'partials/pagination.html' %}
+{% endblock %}

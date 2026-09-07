@@ -1,0 +1,18 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}{{ mode }} — All-in-One Fitness{% endblock %}
+{% block page_title %}{{ mode }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card"><div class="card-body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include 'partials/form.html' %}
+        <div class="form-text mb-3">{% if not form.instance.pk %}The expert will receive the username and password to log in and can change it later.{% endif %}</div>
+        <button type="submit" class="btn btn-brand">Save expert</button>
+        <a href="{% url 'manage_experts' %}" class="btn btn-outline-secondary">Cancel</a>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

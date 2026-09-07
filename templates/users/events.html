@@ -1,2 +1,32 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>My events</h1>{% for registration in registrations %}<div class="card p-3 mb-2"><strong>{{ registration.event.title }}</strong><span>{{ registration.event.event_date }} - {{ registration.status }}</span></div>{% empty %}<p>You are not registered for any events.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}My Events — All-in-One Fitness{% endblock %}
+{% block page_title %}My Events{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <p class="text-muted mb-0">Your event registrations.</p>
+  <a href="{% url 'event_list' %}" class="btn btn-outline-brand btn-sm"><i class="bi bi-calendar-event me-1"></i>Browse events</a>
+</div>
+<div class="card"><div class="card-body p-0">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Event</th><th>Venue</th><th>Date &amp; time</th><th>Status</th><th>Registered</th><th></th></tr></thead>
+      <tbody>
+        {% for reg in registrations %}
+          <tr>
+            <td><strong>{{ reg.event.title }}</strong></td>
+            <td>{{ reg.event.venue }}</td>
+            <td>{{ reg.event.event_date|date:'D, d M Y' }} · {{ reg.event.start_time|time:'g:i A' }}</td>
+            <td><span class="badge badge-soft-success">{{ reg.status }}</span></td>
+            <td>{{ reg.registered_at|date:'d M Y' }}</td>
+            <td class="table-actions">
+              <a href="{% url 'cancel_event' reg.id %}" class="btn btn-sm btn-outline-danger" data-confirm="Cancel this registration?">Cancel</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-center text-muted py-4">You have not registered for any events yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div></div>
+{% endblock %}

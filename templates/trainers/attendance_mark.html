@@ -1,0 +1,51 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Mark Attendance — All-in-One Fitness{% endblock %}
+{% block page_title %}Mark Attendance{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card mb-4"><div class="card-body">
+      <form method="get" class="row g-2 align-items-end">
+        <div class="col-md-6">
+          <label class="form-label">Batch</label>
+          <select name="batch" class="form-select" onchange="this.form.submit()">
+            <option value="">Select a batch…</option>
+            {% for b in batches %}
+              <option value="{{ b.id }}" {% if selected_batch and selected_batch.id == b.id %}selected{% endif %}>{{ b.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-6"><label class="form-label">Date</label><input type="date" name="date" value="{{ att_date|date:'Y-m-d' }}" class="form-control" onchange="this.form.submit()"></div>
+      </form>
+    </div></div>
+
+    {% if selected_batch %}
+      <div class="card"><div class="card-header">{{ selected_batch.name }} · {{ att_date }} — tick members who were <strong>present</strong></div><div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="batch" value="{{ selected_batch.id }}">
+          <input type="hidden" name="date" value="{{ att_date|date:'Y-m-d' }}">
+          <div class="row g-2 mb-3">
+            {% for member in members %}
+              <div class="col-md-6">
+                <div class="form-check form-switch border rounded p-2">
+                  <input class="form-check-input" type="checkbox" name="present" value="{{ member.user_id }}" id="m{{ member.user_id }}" {% if member.present_today %}checked{% endif %}>
+                  <label class="form-check-label w-100" for="m{{ member.user_id }}">
+                    <span class="d-block small fw-semibold">{{ member.user.get_full_name|default:member.user.username }}</span>
+                    <span class="small text-muted">{{ member.user.email }}</span>
+                  </label>
+                </div>
+              </div>
+            {% empty %}
+              <p class="text-muted small">This batch has no active members.</p>
+            {% endfor %}
+          </div>
+          <button type="submit" class="btn btn-brand"><i class="bi bi-check2-square me-1"></i>Save attendance</button>
+        </form>
+      </div></div>
+    {% else %}
+      <div class="empty-state card"><i class="bi bi-calendar-check"></i>Select a batch above to mark attendance.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

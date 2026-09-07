@@ -1,2 +1,61 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>User report</h1>{% for entry in entries %}<p>{{ entry }}</p>{% empty %}<p>No report entries available.</p>{% endfor %}</div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}My Reports — All-in-One Fitness{% endblock %}
+{% block page_title %}My Reports{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon"><i class="bi bi-calendar-check"></i></div><div><div class="num">{{ attendance_pct }}%</div><div class="lbl">Attendance</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon blue"><i class="bi bi-clipboard-check"></i></div><div><div class="num">{{ workouts|length }}</div><div class="lbl">Workout plans</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon amber"><i class="bi bi-egg-fried"></i></div><div><div class="num">{{ diets|length }}</div><div class="lbl">Diet plans</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-icon purple"><i class="bi bi-credit-card"></i></div><div><div class="num">{{ payment_values|length }}</div><div class="lbl">Payments made</div></div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card mb-4"><div class="card-header">Weight over time</div><div class="card-body">
+      {% if weight_labels %}<canvas id="wChart" height="130"></canvas>
+      {% else %}<div class="empty-state"><i class="bi bi-graph-up"></i>Add progress measurements to see this chart.</div>{% endif %}
+    </div></div>
+    <div class="card"><div class="card-header">Payment history</div><div class="card-body">
+      {% if payment_labels %}<canvas id="pChart" height="130"></canvas>
+      {% else %}<div class="empty-state"><i class="bi bi-credit-card"></i>No payments yet.</div>{% endif %}
+    </div></div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card mb-4"><div class="card-header">Body fat %</div><div class="card-body">
+      {% if body_fat_labels %}<canvas id="bfChart" height="130"></canvas>
+      {% else %}<div class="empty-state"><i class="bi bi-percent"></i>No body-fat data yet.</div>{% endif %}
+    </div></div>
+    <div class="card"><div class="card-header">Health records</div><div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Date</th><th>Height</th><th>Weight</th><th>BMI</th><th>BP</th></tr></thead>
+          <tbody>
+            {% for record in health_records %}
+              <tr><td>{{ record.recorded_at|date:'d M Y' }}</td><td>{{ record.height }} cm</td><td>{{ record.weight }} kg</td><td>{{ record.bmi }}</td><td>{{ record.blood_pressure|default:'—' }}</td></tr>
+            {% empty %}
+              <tr><td colspan="5" class="text-center text-muted py-3">No health records yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+{% if weight_labels %}
+<script>
+new Chart(document.getElementById('wChart'), { type: 'line', data: { labels: {{ weight_labels|safe }}, datasets: [{ label: 'Weight (kg)', data: {{ weight_values|safe }}, borderColor: '#16a34a', backgroundColor: '#16a34a22', fill: true, tension: .35 }] }, options: { plugins: { legend: { display: false } } } });
+</script>
+{% endif %}
+{% if payment_labels %}
+<script>
+new Chart(document.getElementById('pChart'), { type: 'bar', data: { labels: {{ payment_labels|safe }}, datasets: [{ label: 'Amount (₹)', data: {{ payment_values|safe }}, backgroundColor: '#2563eb', borderRadius: 6 }] }, options: { plugins: { legend: { display: false } } } });
+</script>
+{% endif %}
+{% if body_fat_labels %}
+<script>
+new Chart(document.getElementById('bfChart'), { type: 'line', data: { labels: {{ body_fat_labels|safe }}, datasets: [{ label: 'Body fat %', data: {{ body_fat_values|safe }}, borderColor: '#d97706', backgroundColor: '#d9770622', fill: true, tension: .35 }] }, options: { plugins: { legend: { display: false } } } });
+</script>
+{% endif %}
+{% endblock %}

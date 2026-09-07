@@ -1,2 +1,86 @@
-{% extends 'base.html' %}
-{% block content %}<div class="container"><h1>Trainer dashboard</h1><p>Welcome, {{ trainer.full_name|default:request.user.username }}.</p><div class="row"><div class="col-md-4">Batches: {{ stats.assigned_batches }}</div><div class="col-md-4">Users: {{ stats.assigned_users }}</div><div class="col-md-4">Attendance: {{ stats.attendance }}</div></div></div>{% endblock %}
+{% extends 'dashboard_base.html' %}
+{% block title %}Trainer Dashboard — All-in-One Fitness{% endblock %}
+{% block page_title %}Trainer Dashboard{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><a href="{% url 'trainer_batches' %}" class="stat-card text-decoration-none"><div class="stat-icon"><i class="bi bi-layers"></i></div><div><div class="num">{{ stats.assigned_batches }}</div><div class="lbl">Assigned batches</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'trainer_user_health' %}" class="stat-card text-decoration-none"><div class="stat-icon blue"><i class="bi bi-people"></i></div><div><div class="num">{{ stats.assigned_users }}</div><div class="lbl">Assigned users</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'trainer_attendance' %}" class="stat-card text-decoration-none"><div class="stat-icon amber"><i class="bi bi-calendar-check"></i></div><div><div class="num">{{ stats.attendance_records }}</div><div class="lbl">Attendance entries</div></div></a></div>
+  <div class="col-6 col-lg-3"><a href="{% url 'trainer_workout_plans' %}" class="stat-card text-decoration-none"><div class="stat-icon purple"><i class="bi bi-clipboard-pulse"></i></div><div><div class="num">{{ stats.workout_plans }}</div><div class="lbl">Workout plans</div></div></a></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <span>My batches</span>
+        <a class="small" href="{% url 'trainer_batches' %}">View all</a>
+      </div>
+      <div class="card-body p-0">
+        {% for batch in batches %}
+          <div class="d-flex justify-content-between align-items-center px-3 py-3 border-bottom">
+            <div>
+              <strong class="small">{{ batch.name }}</strong>
+              <div class="small text-muted">{{ batch.schedule|default:'Schedule TBD' }} · {{ batch.memberships.count }} member{{ batch.memberships.count|pluralize }}</div>
+            </div>
+            <div class="table-actions">
+              <a href="{% url 'trainer_batch_members' batch.id %}" class="btn btn-sm btn-outline-brand">Members</a>
+              <a href="{% url 'trainer_attendance_mark' %}?batch={{ batch.id }}" class="btn btn-sm btn-brand">Mark attendance</a>
+            </div>
+          </div>
+        {% empty %}
+          <div class="empty-state"><i class="bi bi-layers"></i>No batches assigned yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Upcoming events</div>
+      <div class="card-body p-0">
+        {% for event in upcoming_events %}
+          <div class="px-3 py-2 border-bottom small">
+            <i class="bi bi-calendar-event text-success me-1"></i><strong>{{ event.title }}</strong>
+            <span class="text-muted">· {{ event.event_date|date:'D, d M' }} · {{ event.venue }}</span>
+          </div>
+        {% empty %}
+          <div class="empty-state"><i class="bi bi-calendar-x"></i>No upcoming events.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card mb-4">
+      <div class="card-header">Pending tasks</div>
+      <div class="card-body p-0">
+        {% for batch in pending_tasks %}
+          <div class="d-flex justify-content-between align-items-center px-3 py-3 border-bottom">
+            <span class="small"><i class="bi bi-exclamation-circle text-warning me-1"></i>Attendance not marked today for <strong>{{ batch.name }}</strong></span>
+            <a href="{% url 'trainer_attendance_mark' %}?batch={{ batch.id }}" class="btn btn-sm btn-brand">Mark now</a>
+          </div>
+        {% empty %}
+          <div class="empty-state"><i class="bi bi-check-circle"></i>All tasks done for today!</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Recent attendance</div>
+      <div class="card-body p-0">
+        {% for entry in recent_attendance %}
+          <div class="d-flex justify-content-between px-3 py-2 border-bottom small">
+            <span>{{ entry.user.get_full_name|default:entry.user.username }} · {{ entry.batch.name }}</span>
+            <span>
+              {% if entry.status == 'Present' %}<span class="badge badge-soft-success">Present</span>
+              {% else %}<span class="badge badge-soft-danger">Absent</span>{% endif %}
+              <span class="text-muted ms-1">{{ entry.date }}</span>
+            </span>
+          </div>
+        {% empty %}
+          <div class="empty-state"><i class="bi bi-calendar-check"></i>No attendance marked yet.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
