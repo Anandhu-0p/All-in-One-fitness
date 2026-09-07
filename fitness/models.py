@@ -4,10 +4,16 @@ from trainers.models import TrainerProfile
 
 
 class WorkoutPlan(models.Model):
+    DIFFICULTY_CHOICES = [
+        ('Beginner', 'Beginner'),
+        ('Intermediate', 'Intermediate'),
+        ('Advanced', 'Advanced'),
+    ]
+
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     goal = models.CharField(max_length=150, blank=True)
-    difficulty_level = models.CharField(max_length=50, default='Beginner')
+    difficulty_level = models.CharField(max_length=50, choices=DIFFICULTY_CHOICES, default='Beginner')
     duration_weeks = models.PositiveIntegerField(default=4)
     created_by_trainer = models.ForeignKey(TrainerProfile, on_delete=models.CASCADE, related_name='workout_plans')
     created_at = models.DateTimeField(auto_now_add=True)
