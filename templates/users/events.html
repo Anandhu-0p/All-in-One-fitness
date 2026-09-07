@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>My events</h1>{% for registration in registrations %}<div class="card p-3 mb-2"><strong>{{ registration.event.title }}</strong><span>{{ registration.event.event_date }} - {{ registration.status }}</span></div>{% empty %}<p>You are not registered for any events.</p>{% endfor %}</div>{% endblock %}

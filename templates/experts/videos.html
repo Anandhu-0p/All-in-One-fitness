@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Fitness videos</h1>{% for video in items %}<div class="card p-3 mb-2"><h2>{{ video.title }}</h2><p>{{ video.description }}</p>{% if video.video_url %}<a href="{{ video.video_url }}">Watch video</a>{% endif %}</div>{% empty %}<p>No videos found.</p>{% endfor %}</div>{% endblock %}

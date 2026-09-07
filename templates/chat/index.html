@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Chat</h1>{% for conversation in conversations %}<div class="card p-3 mb-2">Conversation updated {{ conversation.updated_at }}</div>{% empty %}<p>No conversations yet.</p>{% endfor %}</div>{% endblock %}

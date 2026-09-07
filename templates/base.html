@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>All-in-One Fitness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+  {% if user.is_authenticated %}
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand-mini" href="{% url 'dashboard_redirect' %}">ALL-IN-ONE <span>FITNESS</span></a>
+        {% if user.is_superuser %}
+          <a class="nav-item" href="{% url 'admin_dashboard' %}">Overview</a>
+          <a class="nav-item" href="{% url 'event_list' %}">Events</a>
+          <a class="nav-item" href="{% url 'payments_history' %}">Payments</a>
+        {% elif user.groups.all.0.name == 'Trainer' %}
+          <a class="nav-item" href="{% url 'trainer_dashboard' %}">Overview</a>
+          <a class="nav-item" href="{% url 'trainer_batches' %}">My Batches</a>
+          <a class="nav-item" href="{% url 'trainer_attendance' %}">Attendance</a>
+          <a class="nav-item" href="{% url 'trainer_user_health' %}">Health Records</a>
+        {% elif user.groups.all.0.name == 'Expert' %}
+          <a class="nav-item" href="{% url 'expert_dashboard' %}">Overview</a>
+          <a class="nav-item" href="{% url 'expert_tips' %}">Tips &amp; Videos</a>
+          <a class="nav-item" href="{% url 'expert_videos' %}">Video Library</a>
+        {% else %}
+          <a class="nav-item" href="{% url 'user_dashboard' %}">Overview</a>
+          <a class="nav-item" href="{% url 'fitness_plans' %}">Workout Plans</a>
+          <a class="nav-item" href="{% url 'user_events' %}">Events</a>
+          <a class="nav-item" href="{% url 'user_payments' %}">Payments</a>
+        {% endif %}
+        <div class="spacer"></div>
+        <div class="who"><b>{{ user.get_full_name|default:user.username }}</b>{{ user.groups.all.0.name|default:'Member' }}</div>
+        <a class="logout" href="{% url 'logout' %}">Log out</a>
+      </aside>
+      <main class="main">
+  {% else %}
+    <nav class="public-nav"><div class="public-nav-inner"><a class="brand" href="{% url 'landing' %}">ALL-IN-ONE <span>FITNESS</span></a><div class="public-links"><a href="{% url 'login' %}">Log in</a><a href="{% url 'register' %}">Register</a></div></div></nav>
+    <main class="public-content">
+  {% endif %}
+  {% if messages %}
+    {% for message in messages %}<div class="alert alert-{{ message.tags|default:'info' }}">{{ message }}</div>{% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+  {% if user.is_authenticated %}</main></div>{% else %}</main>{% endif %}
+</body>
+</html>

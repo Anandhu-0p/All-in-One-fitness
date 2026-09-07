@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Events</h1>{% for event in events %}<div class="card p-3 mb-2"><h2>{{ event.title }}</h2><p>{{ event.description }}</p><p>{{ event.event_date }} at {{ event.venue }}</p><a class="btn btn-primary" href="{% url 'register_event' event.id %}">Register</a></div>{% empty %}<p>No open events.</p>{% endfor %}</div>{% endblock %}

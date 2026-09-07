@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Membership plans</h1>{% for plan in plans %}<div class="card p-3 mb-2"><h2>{{ plan.name }}</h2><p>{{ plan.description }}</p><strong>{{ plan.amount }}</strong></div>{% empty %}<p>No active plans found.</p>{% endfor %}</div>{% endblock %}

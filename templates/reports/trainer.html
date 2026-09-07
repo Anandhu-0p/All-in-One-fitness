@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Trainer report</h1>{% for entry in attendance_summary %}<p>{{ entry }}</p>{% empty %}<p>No attendance summary available.</p>{% endfor %}</div>{% endblock %}

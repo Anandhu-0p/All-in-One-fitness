@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Payment alerts</h1>{% for alert in items %}<div class="alert alert-warning">{{ alert.message }}{% if alert.due_date %} Due {{ alert.due_date }}.{% endif %}</div>{% empty %}<p>No payment alerts.</p>{% endfor %}</div>{% endblock %}

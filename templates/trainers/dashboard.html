@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Trainer dashboard</h1><p>Welcome, {{ trainer.full_name|default:request.user.username }}.</p><div class="row"><div class="col-md-4">Batches: {{ stats.assigned_batches }}</div><div class="col-md-4">Users: {{ stats.assigned_users }}</div><div class="col-md-4">Attendance: {{ stats.attendance }}</div></div></div>{% endblock %}

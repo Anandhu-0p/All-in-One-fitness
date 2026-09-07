@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>User health</h1>{% for member in members %}<p>{{ member.user.get_full_name|default:member.user.username }}</p>{% empty %}<p>No batch members found.</p>{% endfor %}</div>{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="landing-wrap">
+  <div class="hero">
+    <h1>ALL-IN-ONE <span>FITNESS</span></h1>
+    <p>One platform for admins, trainers, experts, and members. Manage batches, attendance, payments, and coaching in one focused workspace.</p>
+    <div class="form-actions">
+      <a href="{% url 'register' %}" class="btn btn-red">Join the program</a>
+      <a href="{% url 'login' %}" class="btn btn-outline">Log in</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

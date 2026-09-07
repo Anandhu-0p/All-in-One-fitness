@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Diet plans</h1>{% for plan in plans %}<div class="card p-3 mb-2"><h2>{{ plan.title }}</h2><p>{{ plan.description }}</p></div>{% empty %}<p>No diet plans found.</p>{% endfor %}</div>{% endblock %}

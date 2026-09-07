@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Profile</h1>{% if profile %}<dl><dt>Name</dt><dd>{{ profile.full_name }}</dd><dt>Email</dt><dd>{{ profile.email }}</dd><dt>Goal</dt><dd>{{ profile.fitness_goal|default:'Not set' }}</dd></dl>{% else %}<p>Profile details are not available.</p>{% endif %}</div>{% endblock %}

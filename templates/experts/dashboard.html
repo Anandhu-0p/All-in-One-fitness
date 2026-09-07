@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Expert dashboard</h1><p>Welcome, {{ expert.full_name|default:request.user.username }}.</p><p>Diet plans: {{ diet_plans }} | Videos: {{ videos }}</p></div>{% endblock %}

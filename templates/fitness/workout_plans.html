@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Workout plans</h1>{% for assignment in assignments %}<div class="card p-3 mb-2"><h2>{{ assignment.workout_plan.title }}</h2><p>{{ assignment.workout_plan.description }}</p><span>{{ assignment.status }}</span></div>{% empty %}<p>No workout plans assigned.</p>{% endfor %}</div>{% endblock %}

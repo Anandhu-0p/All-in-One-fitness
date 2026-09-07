@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>Wellness tips</h1>{% for tip in tips %}<article class="mb-3"><h2>{{ tip.title }}</h2><p>{{ tip.content }}</p></article>{% empty %}<p>No wellness tips found.</p>{% endfor %}</div>{% endblock %}

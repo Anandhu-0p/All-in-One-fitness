@@ -1,0 +1,6 @@
+Django>=4.0
+djangorestframework
+mysqlclient
+python-dotenv
+django-bootstrap5
+Pillow

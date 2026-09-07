@@ -1,0 +1,2 @@
+{% extends 'base.html' %}
+{% block content %}<div class="container"><h1>User report</h1>{% for entry in entries %}<p>{{ entry }}</p>{% empty %}<p>No report entries available.</p>{% endfor %}</div>{% endblock %}
