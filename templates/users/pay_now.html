@@ -9,13 +9,43 @@
       <h4 class="mt-2">{{ plan.name }}</h4>
       <div class="display-5 fw-bold text-success">₹{{ plan.amount }}</div>
       <p class="text-muted small">{{ plan.duration_in_months }} month{{ plan.duration_in_months|pluralize }} · {{ plan.description|default:'' }}</p>
-      <div class="alert alert-secondary small text-start">
-        <strong>Demo gateway</strong> — no real card is charged. The payment will be recorded as <span class="badge badge-soft-success">Paid</span> with a generated transaction id.
-      </div>
-      <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-brand w-100 py-2"><i class="bi bi-lock me-1"></i>Pay ₹{{ plan.amount }}</button>
-      </form>
+      {% if razorpay_order %}
+        <div class="alert alert-info small text-start">You will be redirected to Razorpay to complete this payment securely.</div>
+        <form method="post" action="{% url 'verify_razorpay_payment' %}" id="razorpay-verify-form">
+          {% csrf_token %}
+          <input type="hidden" name="razorpay_order_id">
+          <input type="hidden" name="razorpay_payment_id">
+          <input type="hidden" name="razorpay_signature">
+        </form>
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script>
+          const razorpayOptions = {
+            key: '{{ razorpay_key_id|escapejs }}',
+            amount: '{{ razorpay_order.amount }}',
+            currency: '{{ razorpay_order.currency|escapejs }}',
+            name: 'All-in-One Fitness',
+            description: '{{ plan.name|escapejs }} membership',
+            order_id: '{{ razorpay_order.id|escapejs }}',
+            handler: function (response) {
+              const form = document.getElementById('razorpay-verify-form');
+              form.elements.razorpay_order_id.value = response.razorpay_order_id;
+              form.elements.razorpay_payment_id.value = response.razorpay_payment_id;
+              form.elements.razorpay_signature.value = response.razorpay_signature;
+              form.submit();
+            },
+            theme: {color: '#198754'}
+          };
+          new Razorpay(razorpayOptions).open();
+        </script>
+      {% else %}
+        <div class="alert alert-secondary small text-start">
+          <strong>Demo gateway</strong> — Razorpay keys are not configured, so no real card is charged.
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-brand w-100 py-2"><i class="bi bi-lock me-1"></i>Pay ₹{{ plan.amount }}</button>
+        </form>
+      {% endif %}
       <a href="{% url 'user_payments' %}" class="btn btn-link btn-sm mt-2">Back to payments</a>
     </div></div>
   </div>

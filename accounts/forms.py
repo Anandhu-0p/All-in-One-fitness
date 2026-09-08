@@ -96,7 +96,7 @@ class UserProfileForm(forms.ModelForm):
         ]
         widgets = {
             'full_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. +1 555 010 2030'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g. +91 98765 43210'}),
             'date_of_birth': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'gender': forms.Select(attrs={'class': 'form-select'}),
             'profile_image': forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'}),

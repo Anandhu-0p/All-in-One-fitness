@@ -67,7 +67,7 @@
       {% endfor %}
     </div></div>
     <div class="disclaimer-box mt-3">
-      <i class="bi bi-info-circle me-1"></i>Demo mode: "Pay now" records a payment through a simulated gateway. A real payment gateway (e.g. Stripe/Razorpay) can be plugged in later.
+      <i class="bi bi-info-circle me-1"></i>{% if razorpay_enabled %}Payments are processed securely by Razorpay.{% else %}Demo mode is active. Configure Razorpay keys to accept real payments.{% endif %}
     </div>
   </div>
 </div>

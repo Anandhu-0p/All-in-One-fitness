@@ -11,4 +11,5 @@ urlpatterns = [
     path('events/', views.my_events, name='user_events'),
     path('payments/', views.payments, name='user_payments'),
     path('payments/pay/<int:plan_id>/', views.pay_now, name='pay_now'),
+    path('payments/pay/verify/', views.verify_razorpay_payment, name='verify_razorpay_payment'),
 ]

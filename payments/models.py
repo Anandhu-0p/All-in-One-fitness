@@ -23,6 +23,9 @@ class Payment(models.Model):
     payment_year = models.CharField(max_length=10, blank=True)
     payment_method = models.CharField(max_length=100, blank=True)
     transaction_id = models.CharField(max_length=100, blank=True)
+    razorpay_order_id = models.CharField(max_length=100, blank=True)
+    razorpay_payment_id = models.CharField(max_length=100, blank=True)
+    razorpay_signature = models.CharField(max_length=255, blank=True)
     status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
     receipt = models.FileField(upload_to='receipts/', blank=True, null=True)
 

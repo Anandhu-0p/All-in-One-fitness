@@ -31,6 +31,8 @@ def _ensure_user(username, email, first, last, role, password=DEMO_PASSWORD):
         user = User.objects.create_user(username=username, email=email, first_name=first, last_name=last)
         created = True
     user.email = email
+    user.first_name = first
+    user.last_name = last
     user.is_active = True
     user.set_password(password)  # demo accounts always use the documented demo password
     user.save()
@@ -53,48 +55,48 @@ class Command(BaseCommand):
             Group.objects.get_or_create(name=name)
 
         # ---- Accounts ----------------------------------------------------
-        admin, _ = _ensure_user('admin', 'admin@example.com', 'Alex', 'Admin', ROLE_ADMIN := 'Admin')
+        admin, _ = _ensure_user('admin', 'admin@example.com', 'Arun', 'Nair', ROLE_ADMIN := 'Admin')
         admin.is_staff = True
         admin.is_superuser = True
         admin.save()
 
-        trainer_user, _ = _ensure_user('trainer', 'trainer@example.com', 'Marcus', 'Fitness', ROLE_TRAINER)
-        expert_user, _ = _ensure_user('expert', 'expert@example.com', 'Dr', 'Wellness', ROLE_EXPERT)
-        user_user, _ = _ensure_user('user', 'user@example.com', 'Jordan', 'Member', ROLE_USER)
+        trainer_user, _ = _ensure_user('trainer', 'trainer@example.com', 'Vishnu', 'Menon', ROLE_TRAINER)
+        expert_user, _ = _ensure_user('expert', 'expert@example.com', 'Anjali', 'Pillai', ROLE_EXPERT)
+        user_user, _ = _ensure_user('user', 'user@example.com', 'Akhil', 'Krishnan', ROLE_USER)
 
-        trainer2_user, _ = _ensure_user('trainer2', 'priya@example.com', 'Priya', 'Strength', ROLE_TRAINER)
-        expert2_user, _ = _ensure_user('expert2', 'sara@example.com', 'Sara', 'Nutrition', ROLE_EXPERT)
-        user2, _ = _ensure_user('member2', 'member2@example.com', 'Sam', 'Runner', ROLE_USER)
-        user3, _ = _ensure_user('member3', 'member3@example.com', 'Aisha', 'Yoga', ROLE_USER)
+        trainer2_user, _ = _ensure_user('trainer2', 'priya@example.com', 'Deepa', 'Varma', ROLE_TRAINER)
+        expert2_user, _ = _ensure_user('expert2', 'sara@example.com', 'Sreelakshmi', 'Menon', ROLE_EXPERT)
+        user2, _ = _ensure_user('member2', 'member2@example.com', 'Nikhil', 'Madhavan', ROLE_USER)
+        user3, _ = _ensure_user('member3', 'member3@example.com', 'Lakshmi', 'Suresh', ROLE_USER)
 
-        trainer, _ = TrainerProfile.objects.get_or_create(user=trainer_user, defaults={
-            'full_name': 'Marcus Fitness', 'email': 'trainer@example.com', 'mobile_number': '+1 555 010 1001',
-            'specialization': 'Strength & Conditioning', 'qualification': 'ACE Certified PT',
+        trainer, _ = TrainerProfile.objects.update_or_create(user=trainer_user, defaults={
+            'full_name': 'Vishnu Menon', 'email': 'trainer@example.com', 'mobile_number': '+91 98765 61001',
+            'specialization': 'Strength & Conditioning', 'qualification': 'ACE Certified PT India',
             'experience': 8, 'bio': 'Certified strength coach helping members build sustainable training habits.',
         })
-        TrainerProfile.objects.get_or_create(user=trainer2_user, defaults={
-            'full_name': 'Priya Strength', 'email': 'priya@example.com', 'mobile_number': '+1 555 010 1002',
-            'specialization': 'HIIT & Functional Training', 'qualification': 'NASM CPT',
+        TrainerProfile.objects.update_or_create(user=trainer2_user, defaults={
+            'full_name': 'Deepa Varma', 'email': 'priya@example.com', 'mobile_number': '+91 98765 61002',
+            'specialization': 'HIIT & Functional Training', 'qualification': 'NASM CPT India',
             'experience': 6, 'bio': 'High-energy HIIT coach who makes every session count.',
         })
-        expert, _ = ExpertProfile.objects.get_or_create(user=expert_user, defaults={
-            'full_name': 'Dr Wellness', 'email': 'expert@example.com', 'mobile_number': '+1 555 010 2001',
+        expert, _ = ExpertProfile.objects.update_or_create(user=expert_user, defaults={
+            'full_name': 'Dr Anjali Pillai', 'email': 'expert@example.com', 'mobile_number': '+91 98765 62001',
             'specialization': 'Sports Nutrition', 'qualification': 'MSc Nutrition & Dietetics',
             'bio': 'Nutrition scientist creating practical, allergy-aware meal plans.',
         })
-        ExpertProfile.objects.get_or_create(user=expert2_user, defaults={
-            'full_name': 'Sara Nutrition', 'email': 'sara@example.com', 'mobile_number': '+1 555 010 2002',
+        ExpertProfile.objects.update_or_create(user=expert2_user, defaults={
+            'full_name': 'Sreelakshmi Menon', 'email': 'sara@example.com', 'mobile_number': '+91 98765 62002',
             'specialization': 'Weight Management', 'qualification': 'RD, CDE',
             'bio': 'Registered dietitian focused on sustainable weight management.',
         })
 
-        for u, name, email, goal in [
-            (user_user, 'Jordan Member', 'user@example.com', 'Lose weight'),
-            (user2, 'Sam Runner', 'member2@example.com', 'Improve endurance'),
-            (user3, 'Aisha Yoga', 'member3@example.com', 'Flexibility & strength'),
+        for u, name, email, phone, address, goal in [
+            (user_user, 'Akhil Krishnan', 'user@example.com', '+91 98765 63001', 'Vyttila, Ernakulam, Kerala', 'Lose weight'),
+            (user2, 'Nikhil Madhavan', 'member2@example.com', '+91 98765 63002', 'Kowdiar, Thiruvananthapuram, Kerala', 'Improve endurance'),
+            (user3, 'Lakshmi Suresh', 'member3@example.com', '+91 98765 63003', 'Nadakkavu, Kozhikode, Kerala', 'Flexibility & strength'),
         ]:
-            profile, _ = UserProfile.objects.get_or_create(user=u, defaults={
-                'full_name': name, 'email': email, 'mobile_number': '+1 555 010 3001',
+            profile, _ = UserProfile.objects.update_or_create(user=u, defaults={
+                'full_name': name, 'email': email, 'mobile_number': phone, 'address': address,
                 'gender': 'Other', 'fitness_goal': goal, 'activity_level': 'Intermediate',
                 'dietary_preference': 'Vegetarian' if u != user2 else 'High-protein',
             })
@@ -103,25 +105,25 @@ class Command(BaseCommand):
 
         # ---- Batches -----------------------------------------------------
         today = date.today()
-        batch_a, _ = Batch.objects.get_or_create(name='Morning Warriors', defaults={
+        batch_a, _ = Batch.objects.update_or_create(name='Morning Warriors', defaults={
             'description': 'Early-bird strength and conditioning batch.',
             'start_date': today, 'end_date': today + timedelta(days=180),
-            'schedule': 'Mon/Wed/Fri 6:00 AM', 'capacity': 20, 'status': 'Active',
+            'schedule': 'Mon/Wed/Fri 6:00 AM IST', 'capacity': 20, 'status': 'Active',
         })
-        batch_b, _ = Batch.objects.get_or_create(name='Evening Fit', defaults={
+        batch_b, _ = Batch.objects.update_or_create(name='Evening Fit', defaults={
             'description': 'Evening HIIT and functional training.',
             'start_date': today, 'end_date': today + timedelta(days=150),
-            'schedule': 'Tue/Thu 7:00 PM', 'capacity': 25, 'status': 'Active',
+            'schedule': 'Tue/Thu 7:00 PM IST', 'capacity': 25, 'status': 'Active',
         })
-        batch_c, _ = Batch.objects.get_or_create(name='Weekend Bootcamp', defaults={
+        batch_c, _ = Batch.objects.update_or_create(name='Weekend Bootcamp', defaults={
             'description': 'Saturday group bootcamps and endurance work.',
             'start_date': today + timedelta(days=7), 'end_date': today + timedelta(days=200),
-            'schedule': 'Sat 8:00 AM', 'capacity': 30, 'status': 'Upcoming',
+            'schedule': 'Sat 8:00 AM IST', 'capacity': 30, 'status': 'Upcoming',
         })
-        Batch.objects.get_or_create(name='Sunrise Stretch', defaults={
+        Batch.objects.update_or_create(name='Sunrise Stretch', defaults={
             'description': 'Morning mobility and yoga-focused batch.',
             'start_date': today, 'end_date': today + timedelta(days=120),
-            'schedule': 'Sun 7:00 AM', 'capacity': 15, 'status': 'Active',
+            'schedule': 'Sun 7:00 AM IST', 'capacity': 15, 'status': 'Active',
         })
 
         for batch, member in [(batch_a, user_user), (batch_a, user2), (batch_b, user3)]:
@@ -256,12 +258,12 @@ class Command(BaseCommand):
 
         # ---- Events ------------------------------------------------------
         for title, days_ahead, venue, capacity in [
-            ('Bootcamp Saturday', 5, 'Central Park Lawn', 30),
-            ('Nutrition Masterclass', 12, 'Main Studio Hall', 40),
-            ('Mind & Movement Workshop', 20, 'Yoga Annex', 25),
-            ('Summer Fitness Challenge Launch', 30, 'Community Center', 50),
+            ('Bootcamp Saturday', 5, 'Marine Drive, Kochi, Kerala', 30),
+            ('Nutrition Masterclass', 12, 'Kakkanad Fitness Studio, Kochi, Kerala', 40),
+            ('Mind & Movement Workshop', 20, 'Kovalam Wellness Centre, Thiruvananthapuram', 25),
+            ('Summer Fitness Challenge Launch', 30, 'Lulu Convention Centre, Thrissur, Kerala', 50),
         ]:
-            event, _ = Event.objects.get_or_create(title=title, defaults={
+            event, _ = Event.objects.update_or_create(title=title, defaults={
                 'description': f'Join our {title.lower()} event — open to all members.',
                 'venue': venue, 'event_date': today + timedelta(days=days_ahead),
                 'start_time': datetime.strptime('09:00', '%H:%M').time(),
@@ -272,15 +274,17 @@ class Command(BaseCommand):
 
         # ---- Payments -----------------------------------------------------
         Payment.objects.get_or_create(
-            user=user_user, membership_plan=monthly,
+            transaction_id='DEMO-PAID-001',
                 defaults={
+                    'user': user_user, 'membership_plan': monthly,
                     'amount': monthly.amount, 'payment_month': today.strftime('%B'), 'payment_year': str(today.year),
                 'payment_method': 'Demo Card (•••• 4242)', 'transaction_id': 'DEMO-PAID-001', 'status': 'Paid',
             },
         )
         Payment.objects.get_or_create(
-            user=user2, membership_plan=quarterly,
+            transaction_id='DEMO-PEND-002',
                 defaults={
+                    'user': user2, 'membership_plan': quarterly,
                     'amount': quarterly.amount, 'payment_month': today.strftime('%B'), 'payment_year': str(today.year),
                 'payment_method': 'Bank transfer', 'transaction_id': 'DEMO-PEND-002', 'status': 'Pending',
             },

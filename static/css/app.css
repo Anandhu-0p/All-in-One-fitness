@@ -200,6 +200,7 @@ a.brand:hover { color: var(--ink); }
   top: 0;
   height: 100vh;
   flex-shrink: 0;
+  transition: width .2s ease;
 }
 .sidebar-brand { padding: 18px 20px 14px; border-bottom: 1px solid rgba(255,255,255,.08); }
 .sidebar-brand .brand { color: #fff; font-size: 23px; }
@@ -264,6 +265,21 @@ a.brand:hover { color: var(--ink); }
 .app-sidebar-offcanvas .sidebar-nav .nav-link { color: #b3c4d4; }
 .app-sidebar-offcanvas .offcanvas-header .brand { color: #fff; }
 .app-sidebar-offcanvas .btn-close { filter: invert(1); }
+
+@media (min-width: 992px) {
+  .app-shell.sidebar-collapsed .app-sidebar { width: 76px; }
+  .app-shell.sidebar-collapsed .sidebar-brand { padding-left: 0; padding-right: 0; text-align: center; }
+  .app-shell.sidebar-collapsed .sidebar-brand .brand { font-size: 0; }
+  .app-shell.sidebar-collapsed .sidebar-brand .brand::before { content: 'AIF'; font: 700 1rem/1 Inter, sans-serif; color: var(--lime); }
+  .app-shell.sidebar-collapsed .sidebar-nav { padding-left: 10px; padding-right: 10px; }
+  .app-shell.sidebar-collapsed .nav-section,
+  .app-shell.sidebar-collapsed .sidebar-user-meta,
+  .app-shell.sidebar-collapsed .sidebar-footer .btn { display: none; }
+  .app-shell.sidebar-collapsed .sidebar-nav .nav-link { justify-content: center; padding-left: 8px; padding-right: 8px; }
+  .app-shell.sidebar-collapsed .sidebar-nav .nav-link i { width: auto; font-size: 1.1rem; }
+  .app-shell.sidebar-collapsed .sidebar-footer { padding-left: 18px; padding-right: 18px; }
+  .app-shell.sidebar-collapsed .sidebar-user { justify-content: center; }
+}
 
 /* ---------- Cards / stats ---------- */
 .card {

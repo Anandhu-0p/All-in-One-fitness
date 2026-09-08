@@ -1,4 +1,33 @@
+/* Restore the desktop sidebar before the page becomes interactive. */
+(function () {
+  if (window.matchMedia('(min-width: 992px)').matches && localStorage.getItem('sidebar-collapsed') === 'true') {
+    document.querySelector('.app-shell')?.classList.add('sidebar-collapsed');
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', function () {
+  var shell = document.querySelector('.app-shell');
+  var sidebarToggle = document.querySelector('.sidebar-toggle');
+
+  if (shell && sidebarToggle) {
+    var updateSidebarToggle = function () {
+      var collapsed = shell.classList.contains('sidebar-collapsed');
+      sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+      sidebarToggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+      sidebarToggle.setAttribute('title', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+      sidebarToggle.querySelector('i').className = collapsed
+        ? 'bi bi-layout-sidebar-inset-reverse'
+        : 'bi bi-layout-sidebar-inset';
+    };
+
+    sidebarToggle.addEventListener('click', function () {
+      shell.classList.toggle('sidebar-collapsed');
+      localStorage.setItem('sidebar-collapsed', String(shell.classList.contains('sidebar-collapsed')));
+      updateSidebarToggle();
+    });
+    updateSidebarToggle();
+  }
+
   // Auto-dismiss alerts after 6 seconds
   document.querySelectorAll('.alert-dismissible').forEach(function (alert) {
     setTimeout(function () {

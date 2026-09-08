@@ -42,6 +42,7 @@ The project loads `.env` from the repository root. See `.env.example`.
 - `DB_NAME`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`: MySQL connection values
 - `EMAIL_BACKEND`: console backend is suitable for local password-reset testing
 - `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USE_TLS`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`
+- `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`: Razorpay Test or Live API credentials. Leave empty to keep local demo payment mode.
 - `SECURE_SSL_REDIRECT`, `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`
 - `SECURE_HSTS_SECONDS`, `SECURE_HSTS_INCLUDE_SUBDOMAINS`, `SECURE_HSTS_PRELOAD`
 
@@ -95,6 +96,15 @@ The test suite includes registration, login, role access, profile and upload val
 ## Password reset
 
 Password reset routes are available at `/reset-password/`. With the default console email backend, reset messages are printed in the terminal. Configure SMTP environment variables for real delivery.
+
+## Razorpay payments
+
+1. Create a Razorpay account and enable Test Mode for development.
+2. Copy the Test API Key ID and Key Secret into `.env` as `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`.
+3. Start the application and choose a membership plan from the user Payments page.
+4. Razorpay Checkout opens in the browser. The server verifies the returned signature before marking the payment as Paid.
+
+Never commit `.env` or Razorpay secrets. Use Live credentials only in a protected production environment.
 
 ## Deployment example: Render
 

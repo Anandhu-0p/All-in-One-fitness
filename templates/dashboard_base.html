@@ -93,6 +93,9 @@
   <div class="app-main">
     <header class="app-topbar">
       <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-icon d-none d-lg-inline-flex sidebar-toggle" type="button" aria-controls="appSidebar" aria-expanded="true" aria-label="Collapse sidebar" title="Collapse sidebar">
+          <i class="bi bi-layout-sidebar-inset"></i>
+        </button>
         <button class="btn btn-icon d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebarMobile" aria-label="Open menu"><i class="bi bi-list fs-4"></i></button>
         <h1 class="topbar-title mb-0">{% block page_title %}{% endblock %}</h1>
       </div>
