@@ -275,7 +275,14 @@ a.brand:hover { color: var(--ink); }
   .app-shell.sidebar-collapsed .nav-section,
   .app-shell.sidebar-collapsed .sidebar-user-meta,
   .app-shell.sidebar-collapsed .sidebar-footer .btn { display: none; }
-  .app-shell.sidebar-collapsed .sidebar-nav .nav-link { justify-content: center; padding-left: 8px; padding-right: 8px; }
+  .app-shell.sidebar-collapsed .sidebar-nav .nav-link {
+    justify-content: center;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 0;
+    line-height: 1;
+    overflow: hidden;
+  }
   .app-shell.sidebar-collapsed .sidebar-nav .nav-link i { width: auto; font-size: 1.1rem; }
   .app-shell.sidebar-collapsed .sidebar-footer { padding-left: 18px; padding-right: 18px; }
   .app-shell.sidebar-collapsed .sidebar-user { justify-content: center; }

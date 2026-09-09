@@ -54,4 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
       link.classList.add('active');
     }
   });
+
+  var desktopNav = document.querySelector('.app-sidebar .sidebar-nav');
+  var activeLink = desktopNav && desktopNav.querySelector('.nav-link.active');
+  if (activeLink) {
+    activeLink.scrollIntoView({ block: 'nearest' });
+  }
 });
